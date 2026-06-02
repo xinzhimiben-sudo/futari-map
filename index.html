@@ -637,6 +637,45 @@ window.addFromDetail = function() {
   document.getElementById('modal-pac-input').value = '';
 };
 
+function addMarkerToMap(s, i, bounds, mapList) {
+  const ci = getSubCat(s.cat);
+  const pos = { lat: s.lat, lng: s.lng };
+  const marker = new google.maps.Marker({
+    position: pos, map: gmap,
+    label: { text: String(i+1), color: 'white', fontWeight: 'bold', fontSize: '12px' },
+    title: s.name,
+    icon: {
+      path: google.maps.SymbolPath.CIRCLE,
+      scale: 14,
+      fillColor: s.visited ? '#4A8C6F' : ci.ac,
+      fillOpacity: 1,
+      strokeColor: 'white',
+      strokeWeight: 2,
+    },
+  });
+  const iw = new google.maps.InfoWindow({
+    content: `<div style="font-family:'Zen Maru Gothic',sans-serif;padding:6px 4px;min-width:120px">
+      <strong style="font-size:14px">${s.name}</strong><br>
+      <small style="color:#6B5E4E">${ci.e} ${s.cat}</small>
+      ${s.visited ? '<br><small style="color:#4A8C6F">✓ 行った！</small>' : ''}
+    </div>`
+  });
+  marker.addListener('click', () => iw.open(gmap, marker));
+  markers.push(marker);
+  bounds.extend(pos);
+
+  const item = document.createElement('div');
+  item.className = 'map-spot-item';
+  item.innerHTML = `
+    <div class="map-spot-num" style="background:${s.visited ? '#4A8C6F' : ci.ac}">${i+1}</div>
+    <div class="map-spot-info">
+      <div class="map-spot-name">${s.name}${s.visited ? ' <span style="font-size:11px;color:#4A8C6F">✓</span>' : ''}</div>
+      <div class="map-spot-cat">${ci.e} ${s.cat} · by ${s.addedBy||'?'}</div>
+    </div>`;
+  item.onclick = () => { gmap.setCenter(pos); gmap.setZoom(16); iw.open(gmap, marker); };
+  mapList.appendChild(item);
+}
+
 function renderMap() {
   if (!gmap) return;
   markers.forEach(m => m.setMap(null));
@@ -644,33 +683,53 @@ function renderMap() {
   const mapList = document.getElementById('map-spot-list');
   const arr = filteredSpots();
 
-  if (!arr.length) { mapList.innerHTML = '<div class="empty"><span class="empty-emoji">📍</span><p>スポットがないよ</p></div>'; return; }
+  if (!arr.length) {
+    mapList.innerHTML = '<div class="empty"><span class="empty-emoji">📍</span><p>スポットがないよ</p></div>';
+    return;
+  }
 
   const bounds = new google.maps.LatLngBounds();
   mapList.innerHTML = '';
+  let idx = 1;
+  const noCoords = [];
 
-  arr.forEach((s, i) => {
-    if (!s.lat || !s.lng) return;
-    const pos = { lat: s.lat, lng: s.lng };
-    const ci = getSubCat(s.cat);
-    const marker = new google.maps.Marker({
-      position: pos, map: gmap,
-      label: { text: String(i+1), color: 'white', fontWeight: 'bold', fontSize: '12px' },
-      title: s.name,
-    });
-    const iw = new google.maps.InfoWindow({
-      content: `<div style="font-family:'Zen Maru Gothic',sans-serif;padding:4px"><strong>${s.name}</strong><br><small>${ci.e} ${s.cat}</small></div>`
-    });
-    marker.addListener('click', () => iw.open(gmap, marker));
-    markers.push(marker);
-    bounds.extend(pos);
+  // 座標があるスポットは直接ピンを立てる
+  arr.forEach(s => {
+    if (s.lat && s.lng) {
+      addMarkerToMap(s, idx++, bounds, mapList);
+    } else {
+      noCoords.push(s);
+    }
+  });
 
-    // リスト
-    const item = document.createElement('div');
-    item.className = 'map-spot-item';
-    item.innerHTML = `<div class="map-spot-num">${i+1}</div><div class="map-spot-info"><div class="map-spot-name">${s.name}</div><div class="map-spot-cat">${ci.e} ${s.cat} · by ${s.addedBy||'?'}</div></div>`;
-    item.onclick = () => { gmap.setCenter(pos); gmap.setZoom(16); iw.open(gmap, marker); };
-    mapList.appendChild(item);
+  // 座標がないスポットはGeocodeで座標を取得
+  const geocoder = new google.maps.Geocoder();
+  noCoords.forEach(s => {
+    const currentIdx = idx++;
+    geocoder.geocode({ address: s.name + ' 日本', language: 'ja' }, (results, status) => {
+      if (status === 'OK' && results[0]) {
+        const loc = results[0].geometry.location;
+        s.lat = loc.lat();
+        s.lng = loc.lng();
+        // Firebaseに座標を保存
+        if (window._fbUpdate) window._fbUpdate(s.id, { lat: s.lat, lng: s.lng });
+        addMarkerToMap(s, currentIdx, bounds, mapList);
+        bounds.extend({ lat: s.lat, lng: s.lng });
+        if (!bounds.isEmpty()) gmap.fitBounds(bounds);
+      } else {
+        // 座標が取れなかった場合もリストには追加
+        const item = document.createElement('div');
+        item.className = 'map-spot-item';
+        const ci = getSubCat(s.cat);
+        item.innerHTML = `
+          <div class="map-spot-num" style="background:#A89880">${currentIdx}</div>
+          <div class="map-spot-info">
+            <div class="map-spot-name">${s.name} <span style="font-size:11px;color:#A89880">📍位置未取得</span></div>
+            <div class="map-spot-cat">${ci.e} ${s.cat} · by ${s.addedBy||'?'}</div>
+          </div>`;
+        mapList.appendChild(item);
+      }
+    });
   });
 
   if (!bounds.isEmpty()) gmap.fitBounds(bounds);
