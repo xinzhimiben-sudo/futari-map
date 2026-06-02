@@ -435,12 +435,12 @@ function initMaps() {
   const input = document.getElementById('pac-input');
   // pac-inputはTextSearch方式で動作
   const service = new google.maps.places.PlacesService(document.createElement('div'));
-
-  // 検索候補リスト
   const suggList = document.getElementById('pac-suggestions');
-
-  // ユーザーの現在地を取得
   let userLocation = new google.maps.LatLng(35.6812, 139.7671);
+  let searchTimer = null;
+  let isTouchSelecting = false;
+
+  // 現在地取得
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(pos => {
       userLocation = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
@@ -450,51 +450,62 @@ function initMaps() {
 
   function searchPlaces(query) {
     if (!query.trim()) { suggList.style.display='none'; return; }
-    // 現在地周辺に絞って検索
-    const center = userLocation;
-    service.textSearch({ query, location: center, radius: 3000, language: 'ja' }, (results, status) => {
+    service.textSearch({ query, location: userLocation, radius: 5000, language: 'ja' }, (results, status) => {
       if (status !== google.maps.places.PlacesServiceStatus.OK || !results.length) {
         suggList.innerHTML = '<div style="padding:10px 14px;font-size:13px;color:var(--ink-light)">見つかりませんでした</div>';
         suggList.style.display = 'block';
         return;
       }
-      suggList.innerHTML = results.slice(0, 6).map((r, i) =>
-        `<div class="pac-sugg-item" ontouchstart="selectSuggestion('${r.place_id}')" onmousedown="selectSuggestion('${r.place_id}')">
-          <span style="font-size:15px">${r.name}</span>
+      suggList.innerHTML = results.slice(0, 6).map(r =>
+        `<div class="pac-sugg-item" data-pid="${r.place_id}">
+          <span style="font-size:15px;font-weight:500">${r.name}</span>
           <span style="font-size:12px;color:var(--ink-light);display:block;margin-top:2px">${r.formatted_address||''}</span>
         </div>`
       ).join('');
+      suggList.querySelectorAll('.pac-sugg-item').forEach(el => {
+        el.addEventListener('touchstart', () => { isTouchSelecting = true; }, { passive: true });
+        el.addEventListener('touchend', e => {
+          e.preventDefault();
+          isTouchSelecting = false;
+          const pid = el.dataset.pid;
+          suggList.style.display = 'none';
+          input.value = '';
+          service.getDetails({ placeId: pid, fields: ['name','formatted_address','geometry','rating','user_ratings_total','photos','url','website'], language: 'ja' }, (details, status) => {
+            if (status === google.maps.places.PlacesServiceStatus.OK) showPlaceDetail(details);
+          });
+        });
+        el.addEventListener('mousedown', e => {
+          e.preventDefault();
+          const pid = el.dataset.pid;
+          suggList.style.display = 'none';
+          input.value = '';
+          service.getDetails({ placeId: pid, fields: ['name','formatted_address','geometry','rating','user_ratings_total','photos','url','website'], language: 'ja' }, (details, status) => {
+            if (status === google.maps.places.PlacesServiceStatus.OK) showPlaceDetail(details);
+          });
+        });
+      });
       suggList.style.display = 'block';
     });
   }
 
-  window.selectSuggestion = function(placeId) {
-    suggList.style.display = 'none';
-    input.value = '';
-    service.getDetails({ placeId, fields: ['name','formatted_address','geometry','rating','user_ratings_total','photos','url','website','opening_hours'], language: 'ja' }, (details, status) => {
-      if (status === google.maps.places.PlacesServiceStatus.OK) showPlaceDetail(details);
-    });
-  };
-
-  let searchTimer = null;
+  // 入力で検索
   input.addEventListener('input', () => {
     clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => searchPlaces(input.value), 500);
+    if (!input.value.trim()) { suggList.style.display='none'; return; }
+    searchTimer = setTimeout(() => searchPlaces(input.value), 600);
   });
 
-  // blurでは消さない（スマホキーボードの完了で消えてしまうため）
-  // 候補リスト以外をタップしたときだけ消す
-  document.addEventListener('touchstart', (e) => {
-    if (!suggList.contains(e.target) && e.target !== input) {
-      suggList.style.display = 'none';
-    }
+  // Enter・完了・検索ボタン
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); clearTimeout(searchTimer); searchPlaces(input.value); }
   });
-  document.addEventListener('mousedown', (e) => {
-    if (!suggList.contains(e.target) && e.target !== input) {
-      suggList.style.display = 'none';
-    }
+
+  // blur：タッチ選択中でなければ候補を消す
+  input.addEventListener('blur', () => {
+    if (!isTouchSelecting) setTimeout(() => { suggList.style.display='none'; }, 300);
   });
-  input.addEventListener('focus', () => { if (input.value) searchPlaces(input.value); });
+
+  input.addEventListener('focus', () => { if (input.value.trim()) searchPlaces(input.value); });
 
   // モーダル内検索バー
   const modalInput = document.getElementById('modal-pac-input');
