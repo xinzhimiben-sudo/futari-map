@@ -184,14 +184,15 @@ body { font-family: 'Zen Maru Gothic', sans-serif; background: var(--sand); colo
 
   <div class="stats-row" id="stats-row"></div>
 
-  <div class="map-search-bar">
-    <input id="pac-input" type="text" placeholder="🔍 場所を検索して追加（例：渋谷スカイ）">
-  </div>
-
   <div id="list-view"></div>
 
-  <div id="map-view">
-    <div id="map-container"></div>
+  <div id="map-view" style="display:none;">
+    <div style="padding:0.75rem 1.25rem 0.5rem;">
+      <input id="pac-input" type="text" placeholder="🔍 行きたい場所を検索して追加…" style="width:100%;padding:11px 14px;border:1.5px solid var(--sand-dark);border-radius:var(--radius-sm);font-family:'Zen Maru Gothic',sans-serif;font-size:14px;background:var(--white);color:var(--ink);outline:none;transition:border-color 0.2s;">
+    </div>
+    <div style="padding:0 1.25rem;">
+      <div id="map-container"></div>
+    </div>
     <div class="map-spot-list" id="map-spot-list"></div>
   </div>
 
@@ -202,6 +203,10 @@ body { font-family: 'Zen Maru Gothic', sans-serif; background: var(--sand); colo
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-title" id="modal-title">場所を追加</div>
+    <div class="field">
+      <label>🔍 場所を検索（Googleマップから）</label>
+      <input type="text" id="modal-pac-input" placeholder="例：渋谷スカイ、代々木公園…">
+    </div>
     <div class="place-preview" id="place-preview"><strong id="preview-name"></strong><span id="preview-addr"></span></div>
     <div class="field"><label>場所の名前</label><input type="text" id="f-name" placeholder="例：代々木公園"></div>
     <div class="field">
@@ -390,7 +395,7 @@ window.selPri = function(el) {
 
 // ========== Google Maps ==========
 function initMaps() {
-  // Places Autocomplete
+  // ヘッダー検索バー
   const input = document.getElementById('pac-input');
   const autocomplete = new google.maps.places.Autocomplete(input, { language:'ja' });
   autocomplete.addListener('place_changed', () => {
@@ -405,10 +410,31 @@ function initMaps() {
     };
     openModal();
     document.getElementById('f-name').value = selectedPlace.name;
+    document.getElementById('modal-pac-input').value = '';
     document.getElementById('preview-name').textContent = selectedPlace.name;
     document.getElementById('preview-addr').textContent = selectedPlace.addr;
     document.getElementById('place-preview').classList.add('show');
     input.value = '';
+  });
+
+  // モーダル内検索バー
+  const modalInput = document.getElementById('modal-pac-input');
+  const modalAC = new google.maps.places.Autocomplete(modalInput, { language:'ja' });
+  modalAC.addListener('place_changed', () => {
+    const place = modalAC.getPlace();
+    if (!place.name) return;
+    selectedPlace = {
+      name: place.name,
+      addr: place.formatted_address || '',
+      mapUrl: place.url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.name)}`,
+      lat: place.geometry?.location?.lat(),
+      lng: place.geometry?.location?.lng(),
+    };
+    document.getElementById('f-name').value = selectedPlace.name;
+    document.getElementById('preview-name').textContent = selectedPlace.name;
+    document.getElementById('preview-addr').textContent = selectedPlace.addr;
+    document.getElementById('place-preview').classList.add('show');
+    modalInput.value = '';
   });
 
   // マップ初期化（東京中心）
@@ -540,6 +566,7 @@ window.closeModal = function() {
   editId=null; selBigCat=''; selSubCat=''; selPriVal=0; selectedPlace=null;
   document.getElementById('f-name').value='';
   document.getElementById('f-memo').value='';
+  document.getElementById('modal-pac-input').value='';
   document.getElementById('place-preview').classList.remove('show');
   document.querySelectorAll('.big-cat-opt').forEach(e=>e.classList.remove('selected'));
   document.querySelectorAll('.sub-cat-opt').forEach(e=>e.classList.remove('selected'));
