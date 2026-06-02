@@ -248,7 +248,7 @@ body { font-family: 'Zen Maru Gothic', sans-serif; background: var(--sand); colo
     <div class="field">
       <label>カテゴリ</label>
       <div class="big-cat-select" id="modal-big-cat"></div>
-      <div class="sub-cat-select" id="modal-sub-cat"></div>
+      <div class="sub-cat-select" id="modal-sub-cat" style="display:none;"></div>
     </div>
     <div class="field"><label>行きたい度</label>
       <div class="pri-row" id="pri-row">
@@ -399,28 +399,29 @@ window.setSubFilter = function(sub, el) {
 
 // ========== モーダル カテゴリ ==========
 function buildModalBigCat() {
-  const bigCatEl = document.getElementById('modal-big-cat');
-  bigCatEl.innerHTML = BIG_CATS.map(c =>
-    `<div class="big-cat-opt" data-v="${c.v}" onclick="selBigCatFn(this)" ontouchend="selBigCatFn(this)">${c.e} ${c.v}</div>`
+  document.getElementById('modal-big-cat').innerHTML = BIG_CATS.map(c =>
+    `<div class="big-cat-opt" data-v="${c.v}" onclick="selBigCatFn('${c.v}')">${c.e} ${c.v}</div>`
   ).join('');
 }
 
-window.selBigCatFn = function(el) {
-  selBigCat = el.dataset.v; selSubCat = '';
-  document.querySelectorAll('.big-cat-opt').forEach(e=>e.classList.remove('selected'));
-  el.classList.add('selected');
-  const subs = SUB_CATS[selBigCat] || [];
+window.selBigCatFn = function(v) {
+  selBigCat = v; selSubCat = '';
+  document.querySelectorAll('.big-cat-opt').forEach(e => {
+    e.classList.toggle('selected', e.dataset.v === v);
+  });
+  const subs = SUB_CATS[v] || [];
   const subEl = document.getElementById('modal-sub-cat');
   subEl.innerHTML = subs.map(s =>
-    `<div class="sub-cat-opt" data-v="${s.v}" onclick="onSubCatClick(this)" ontouchend="onSubCatClick(this)">${s.e} ${s.v}</div>`
+    `<div class="sub-cat-opt" data-v="${s.v}" onclick="onSubCatClick('${s.v}')">${s.e} ${s.v}</div>`
   ).join('');
-  subEl.classList.add('show');
+  subEl.style.display = 'grid';
 };
 
-window.onSubCatClick = function(el) {
-  selSubCat = el.dataset.v;
-  document.querySelectorAll('.sub-cat-opt').forEach(o=>o.classList.remove('selected'));
-  el.classList.add('selected');
+window.onSubCatClick = function(v) {
+  selSubCat = v;
+  document.querySelectorAll('.sub-cat-opt').forEach(o => {
+    o.classList.toggle('selected', o.dataset.v === v);
+  });
 };
 
 window.selSubCatFn = function(el) {
@@ -431,8 +432,9 @@ window.selSubCatFn = function(el) {
 
 window.selPri = function(el) {
   selPriVal = parseInt(el.dataset.v);
-  document.querySelectorAll('.pri-btn').forEach(e=>e.classList.remove('selected'));
-  el.classList.add('selected');
+  document.querySelectorAll('.pri-btn').forEach(e => {
+    e.classList.toggle('selected', e.dataset.v === el.dataset.v);
+  });
 };
 
 // ========== Google Maps ==========
@@ -757,8 +759,8 @@ window.closeModal = function() {
   document.getElementById('modal-pac-input').value='';
   document.getElementById('place-preview').classList.remove('show');
   document.querySelectorAll('.big-cat-opt').forEach(e=>e.classList.remove('selected'));
-  document.querySelectorAll('.sub-cat-opt').forEach(e=>e.classList.remove('selected'));
-  document.getElementById('modal-sub-cat').classList.remove('show');
+  document.getElementById('modal-sub-cat').innerHTML = '';
+  document.getElementById('modal-sub-cat').style.display = 'none';
   document.querySelectorAll('.pri-btn').forEach(e=>e.classList.remove('selected'));
 };
 window.closeModalBg = function(e) { if(e.target===document.getElementById('modal-overlay')) window.closeModal(); };
@@ -793,19 +795,25 @@ window.setPri = (id,v) => window._fbUpdate(id,{pri:v});
 window.deleteSpot = id => { if(!confirm('削除しますか？')) return; window._fbRemove(id); };
 window.editSpot = function(id) {
   const s=spots[id]; if(!s) return;
-  editId=id; selSubCat=s.cat; selPriVal=s.pri;
+  editId=id; selPriVal=s.pri;
   selBigCat = getBigCatOf(s.cat) || '';
+  selSubCat = s.cat;
   document.getElementById('f-name').value=s.name;
   document.getElementById('f-memo').value=s.memo||'';
-  // 大カテゴリ選択
-  document.querySelectorAll('.big-cat-opt').forEach(e=>{
-    if(e.dataset.v===selBigCat) { e.classList.add('selected'); selBigCatFn(e); }
-  });
-  setTimeout(()=>{
-    document.querySelectorAll('.sub-cat-opt').forEach(e=>e.classList.toggle('selected',e.dataset.v===s.cat));
-    document.querySelectorAll('.pri-btn').forEach(e=>e.classList.toggle('selected',parseInt(e.dataset.v)===s.pri));
-  },50);
   window.openModal();
+  // openModal後に選択状態を反映
+  setTimeout(()=>{
+    // 大カテゴリを選択してサブカテゴリを表示
+    selBigCatFn(selBigCat);
+    // サブカテゴリを選択
+    setTimeout(()=>{
+      onSubCatClick(s.cat);
+      // 行きたい度を選択
+      document.querySelectorAll('.pri-btn').forEach(e=>{
+        e.classList.toggle('selected', parseInt(e.dataset.v)===s.pri);
+      });
+    }, 50);
+  }, 50);
 };
 </script>
 
