@@ -18,8 +18,9 @@
   --shadow-md: 0 4px 24px rgba(42,35,24,0.12);
 }
 body { font-family: 'Zen Maru Gothic', sans-serif; background: var(--sand); color: var(--ink); min-height: 100vh; }
- 
-#name-screen { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; background: var(--white); }
+
+/* NAME SCREEN */
+#name-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; background: var(--white); }
 .name-card { background: var(--white); border: 1.5px solid var(--sand-dark); border-radius: 24px; padding: 2.5rem 2rem; max-width: 360px; width: 100%; text-align: center; box-shadow: var(--shadow-md); }
 .name-card .pin-emoji { font-size: 48px; display: block; margin-bottom: 1rem; animation: bounce 2s infinite; }
 @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
@@ -27,38 +28,68 @@ body { font-family: 'Zen Maru Gothic', sans-serif; background: var(--sand); colo
 .name-card p { font-size: 14px; color: var(--ink-mid); margin-bottom: 1.5rem; line-height: 1.6; }
 .name-input { width: 100%; padding: 12px 16px; border: 1.5px solid var(--sand-dark); border-radius: var(--radius-sm); font-family: 'Zen Maru Gothic', sans-serif; font-size: 16px; background: var(--sand); color: var(--ink); outline: none; transition: border-color 0.2s; margin-bottom: 1rem; }
 .name-input:focus { border-color: var(--coral); }
-.start-btn { width: 100%; padding: 13px; background: var(--coral); color: white; border: none; border-radius: var(--radius-sm); font-family: 'Zen Maru Gothic', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+.start-btn { width: 100%; padding: 13px; background: var(--coral); color: white; border: none; border-radius: var(--radius-sm); font-family: 'Zen Maru Gothic', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; }
 .start-btn:hover { background: var(--coral-dark); }
- 
-#app { display: none; max-width: 600px; margin: 0 auto; padding: 0 0 6rem; }
-.app-header { background: var(--white); border-bottom: 1.5px solid var(--sand-dark); padding: 1rem 1.25rem; position: sticky; top: 0; z-index: 50; }
-.header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+
+/* MAIN APP */
+#app { display: none; max-width: 640px; margin: 0 auto; padding: 0 0 6rem; }
+
+/* HEADER */
+.app-header { background: var(--white); border-bottom: 1.5px solid var(--sand-dark); padding: 1rem 1.25rem 0.75rem; position: sticky; top: 0; z-index: 50; }
+.header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.6rem; }
 .header-title { display: flex; align-items: center; gap: 8px; }
 .header-title h1 { font-size: 17px; font-weight: 700; }
-.user-badge { background: var(--coral-light); color: var(--coral-dark); font-size: 13px; font-weight: 700; padding: 5px 12px; border-radius: 99px; border: 1.5px solid var(--coral); }
+.user-badge { background: var(--coral-light); color: var(--coral-dark); font-size: 13px; font-weight: 700; padding: 5px 12px; border-radius: 99px; border: 1.5px solid var(--coral); white-space: nowrap; }
 .sync-indicator { font-size: 11px; color: var(--ink-light); display: flex; align-items: center; gap: 5px; margin-bottom: 0.6rem; }
 .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-.filter-row { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
-.filter-row::-webkit-scrollbar { display: none; }
-.filter-chip { flex-shrink: 0; padding: 5px 12px; border-radius: 99px; font-size: 12px; font-family: 'Zen Maru Gothic', sans-serif; border: 1.5px solid var(--sand-dark); background: var(--white); color: var(--ink-mid); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-.filter-chip.active { background: var(--coral); border-color: var(--coral); color: white; font-weight: 700; }
- 
-.stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 1rem 1.25rem 0; }
-.stat-box { background: var(--white); border-radius: var(--radius-sm); padding: 12px 10px; text-align: center; border: 1.5px solid var(--sand-dark); }
-.stat-num { font-size: 24px; font-weight: 700; color: var(--coral); }
+
+/* TABS (リスト/マップ) */
+.view-tabs { display: flex; gap: 6px; margin-bottom: 0.75rem; }
+.view-tab { flex: 1; padding: 7px; border-radius: var(--radius-sm); border: 1.5px solid var(--sand-dark); background: var(--sand); color: var(--ink-mid); font-family: 'Zen Maru Gothic', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; text-align: center; transition: all 0.15s; }
+.view-tab.active { background: var(--coral); border-color: var(--coral); color: white; }
+
+/* 大カテゴリフィルター */
+.big-cat-row { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; }
+.big-cat-row::-webkit-scrollbar { display: none; }
+.big-cat-chip { flex-shrink: 0; padding: 6px 14px; border-radius: 99px; font-size: 13px; font-family: 'Zen Maru Gothic', sans-serif; border: 1.5px solid var(--sand-dark); background: var(--white); color: var(--ink-mid); cursor: pointer; transition: all 0.15s; white-space: nowrap; font-weight: 500; }
+.big-cat-chip.active { background: var(--ink); border-color: var(--ink); color: white; font-weight: 700; }
+
+/* 小カテゴリフィルター */
+.sub-cat-row { display: flex; gap: 5px; overflow-x: auto; scrollbar-width: none; padding: 0.5rem 1.25rem 0; background: var(--sand); }
+.sub-cat-row::-webkit-scrollbar { display: none; }
+.sub-cat-chip { flex-shrink: 0; padding: 4px 10px; border-radius: 99px; font-size: 12px; font-family: 'Zen Maru Gothic', sans-serif; border: 1.5px solid var(--sand-dark); background: var(--white); color: var(--ink-mid); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.sub-cat-chip.active { border-color: var(--coral); color: var(--coral-dark); background: var(--coral-light); font-weight: 700; }
+
+/* STATS */
+.stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 0.75rem 1.25rem 0; }
+.stat-box { background: var(--white); border-radius: var(--radius-sm); padding: 10px; text-align: center; border: 1.5px solid var(--sand-dark); }
+.stat-num { font-size: 22px; font-weight: 700; color: var(--coral); }
 .stat-label { font-size: 11px; color: var(--ink-mid); margin-top: 2px; }
- 
+
+/* MAP SEARCH BAR */
 .map-search-bar { margin: 0.75rem 1.25rem 0; }
 #pac-input { width: 100%; padding: 11px 14px; border: 1.5px solid var(--sand-dark); border-radius: var(--radius-sm); font-family: 'Zen Maru Gothic', sans-serif; font-size: 14px; background: var(--white); color: var(--ink); outline: none; transition: border-color 0.2s; }
 #pac-input:focus { border-color: var(--coral); }
- 
-.spots-container { padding: 0.75rem 1.25rem; }
+
+/* MAP VIEW */
+#map-view { display: none; padding: 0.75rem 1.25rem; }
+#map-container { width: 100%; height: 420px; border-radius: var(--radius); overflow: hidden; border: 1.5px solid var(--sand-dark); }
+.map-spot-list { margin-top: 0.75rem; display: flex; flex-direction: column; gap: 8px; }
+.map-spot-item { background: var(--white); border: 1.5px solid var(--sand-dark); border-radius: var(--radius-sm); padding: 10px 12px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: border-color 0.15s; }
+.map-spot-item:hover { border-color: var(--coral); }
+.map-spot-num { width: 24px; height: 24px; border-radius: 50%; background: var(--coral); color: white; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.map-spot-info { flex: 1; }
+.map-spot-name { font-size: 14px; font-weight: 700; }
+.map-spot-cat { font-size: 12px; color: var(--ink-mid); }
+
+/* SPOT CARDS */
+#list-view { padding: 0.75rem 1.25rem; }
 .spot-card { background: var(--white); border: 1.5px solid var(--sand-dark); border-radius: var(--radius); margin-bottom: 10px; overflow: hidden; transition: transform 0.15s, box-shadow 0.15s; animation: slideIn 0.25s ease; }
 @keyframes slideIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 .spot-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
 .spot-card.visited { opacity: 0.55; }
-.card-accent { height: 4px; width: 100%; }
+.card-accent { height: 4px; }
 .card-body { padding: 0.9rem 1rem; }
 .card-top { display: flex; align-items: flex-start; gap: 10px; }
 .cat-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
@@ -68,7 +99,7 @@ body { font-family: 'Zen Maru Gothic', sans-serif; background: var(--sand); colo
 .visited-tag { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: var(--green-light); color: var(--green); font-weight: 700; border: 1px solid var(--green); }
 .card-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .cat-tag { font-size: 12px; padding: 3px 10px; border-radius: 99px; font-weight: 500; }
-.stars-row { display: flex; gap: 1px; }
+.stars-row { display: flex; }
 .star-btn { background: none; border: none; font-size: 15px; cursor: pointer; padding: 1px; transition: transform 0.1s; line-height: 1; }
 .star-btn:hover { transform: scale(1.25); }
 .added-by { font-size: 11px; color: var(--ink-light); font-family: 'DM Mono', monospace; }
@@ -76,21 +107,22 @@ body { font-family: 'Zen Maru Gothic', sans-serif; background: var(--sand); colo
 .card-memo a { color: var(--coral); text-decoration: underline; }
 .card-actions { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
 .action-btn { font-size: 12px; padding: 5px 10px; border-radius: var(--radius-sm); border: 1.5px solid var(--sand-dark); background: var(--sand); color: var(--ink-mid); cursor: pointer; font-family: 'Zen Maru Gothic', sans-serif; transition: all 0.15s; display: flex; align-items: center; gap: 4px; }
-.action-btn:hover { background: var(--sand-dark); color: var(--ink); }
+.action-btn:hover { background: var(--sand-dark); }
 .btn-go { border-color: var(--green); color: var(--green); background: var(--green-light); }
 .btn-go:hover { background: var(--green); color: white; }
 .btn-map { border-color: #3A78B5; color: #3A78B5; background: #EBF3FC; }
 .btn-map:hover { background: #3A78B5; color: white; }
 .btn-del { border-color: #e0b0b0; color: #b04040; background: #fff5f5; }
 .btn-del:hover { background: #b04040; color: white; }
- 
-.fab { position: fixed; bottom: 2rem; right: 50%; transform: translateX(50%); max-width: 220px; width: calc(100% - 2.5rem); background: var(--coral); color: white; border: none; border-radius: 99px; padding: 14px 24px; font-size: 15px; font-weight: 700; font-family: 'Zen Maru Gothic', sans-serif; cursor: pointer; box-shadow: 0 4px 20px rgba(232,97,74,0.4); transition: background 0.2s, transform 0.1s; z-index: 40; display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+/* FAB */
+.fab { position: fixed; bottom: 2rem; right: 50%; transform: translateX(50%); max-width: 220px; width: calc(100% - 2.5rem); background: var(--coral); color: white; border: none; border-radius: 99px; padding: 14px 24px; font-size: 15px; font-weight: 700; font-family: 'Zen Maru Gothic', sans-serif; cursor: pointer; box-shadow: 0 4px 20px rgba(232,97,74,0.4); transition: background 0.2s; z-index: 40; display: flex; align-items: center; justify-content: center; gap: 8px; }
 .fab:hover { background: var(--coral-dark); }
-.fab:active { transform: translateX(50%) scale(0.97); }
- 
+
+/* MODAL */
 .modal-overlay { position: fixed; inset: 0; background: rgba(42,35,24,0.45); z-index: 100; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
 .modal-overlay.open { opacity: 1; pointer-events: all; }
-.modal { background: var(--white); border-radius: 24px 24px 0 0; padding: 1.5rem 1.25rem 2rem; width: 100%; max-width: 600px; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); max-height: 90vh; overflow-y: auto; }
+.modal { background: var(--white); border-radius: 24px 24px 0 0; padding: 1.5rem 1.25rem 2rem; width: 100%; max-width: 640px; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); max-height: 90vh; overflow-y: auto; }
 .modal-overlay.open .modal { transform: translateY(0); }
 .modal-handle { width: 36px; height: 4px; background: var(--sand-dark); border-radius: 99px; margin: 0 auto 1.25rem; }
 .modal-title { font-size: 17px; font-weight: 700; margin-bottom: 1.25rem; }
@@ -98,18 +130,23 @@ body { font-family: 'Zen Maru Gothic', sans-serif; background: var(--sand); colo
 .field label { display: block; font-size: 13px; color: var(--ink-mid); margin-bottom: 6px; font-weight: 500; }
 .field input, .field textarea { width: 100%; padding: 11px 14px; border: 1.5px solid var(--sand-dark); border-radius: var(--radius-sm); font-family: 'Zen Maru Gothic', sans-serif; font-size: 15px; background: var(--sand); color: var(--ink); outline: none; transition: border-color 0.2s; }
 .field input:focus, .field textarea:focus { border-color: var(--coral); background: var(--white); }
-.field textarea { height: 80px; resize: none; }
-.cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-.cat-opt { padding: 8px 4px; border: 1.5px solid var(--sand-dark); border-radius: var(--radius-sm); text-align: center; font-size: 12px; cursor: pointer; background: var(--white); color: var(--ink-mid); font-family: 'Zen Maru Gothic', sans-serif; transition: all 0.15s; line-height: 1.4; }
-.cat-opt.selected { border-color: var(--coral); color: var(--coral-dark); background: var(--coral-light); font-weight: 700; }
+.field textarea { height: 70px; resize: none; }
+
+/* 2段階カテゴリ選択 */
+.big-cat-select { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 8px; }
+.big-cat-opt { padding: 9px 4px; border: 1.5px solid var(--sand-dark); border-radius: var(--radius-sm); text-align: center; font-size: 13px; cursor: pointer; background: var(--white); color: var(--ink-mid); font-family: 'Zen Maru Gothic', sans-serif; transition: all 0.15s; }
+.big-cat-opt.selected { border-color: var(--ink); background: var(--ink); color: white; font-weight: 700; }
+.sub-cat-select { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; display: none; }
+.sub-cat-select.show { display: grid; }
+.sub-cat-opt { padding: 8px 4px; border: 1.5px solid var(--sand-dark); border-radius: var(--radius-sm); text-align: center; font-size: 12px; cursor: pointer; background: var(--white); color: var(--ink-mid); font-family: 'Zen Maru Gothic', sans-serif; transition: all 0.15s; line-height: 1.4; }
+.sub-cat-opt.selected { border-color: var(--coral); background: var(--coral-light); color: var(--coral-dark); font-weight: 700; }
+
 .pri-row { display: flex; gap: 6px; }
 .pri-btn { flex: 1; padding: 9px 4px; border: 1.5px solid var(--sand-dark); border-radius: var(--radius-sm); text-align: center; font-size: 13px; cursor: pointer; background: var(--white); color: var(--ink-mid); font-family: 'Zen Maru Gothic', sans-serif; transition: all 0.15s; }
 .pri-btn.selected { border-color: var(--coral); background: var(--coral-light); color: var(--coral-dark); font-weight: 700; }
 .modal-btns { display: flex; gap: 8px; margin-top: 1.5rem; }
 .modal-btns button { flex: 1; padding: 12px; border-radius: var(--radius-sm); font-size: 15px; font-family: 'Zen Maru Gothic', sans-serif; font-weight: 700; cursor: pointer; border: 1.5px solid var(--sand-dark); background: var(--sand); color: var(--ink-mid); }
 .modal-btns .save { background: var(--coral); border-color: var(--coral); color: white; }
-.modal-btns .save:hover { background: var(--coral-dark); }
- 
 .place-preview { background: var(--sand); border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 1rem; font-size: 13px; color: var(--ink-mid); border: 1.5px solid var(--sand-dark); display: none; }
 .place-preview.show { display: block; }
 .place-preview strong { color: var(--ink); font-size: 14px; display: block; margin-bottom: 2px; }
@@ -118,7 +155,7 @@ body { font-family: 'Zen Maru Gothic', sans-serif; background: var(--sand); colo
 </style>
 </head>
 <body>
- 
+
 <div id="name-screen">
   <div class="name-card">
     <span class="pin-emoji">📍</span>
@@ -128,7 +165,7 @@ body { font-family: 'Zen Maru Gothic', sans-serif; background: var(--sand); colo
     <button class="start-btn" onclick="startApp()">はじめる ✈️</button>
   </div>
 </div>
- 
+
 <div id="app">
   <div class="app-header">
     <div class="header-top">
@@ -136,23 +173,42 @@ body { font-family: 'Zen Maru Gothic', sans-serif; background: var(--sand); colo
       <div class="user-badge" id="user-badge"></div>
     </div>
     <div class="sync-indicator"><div class="sync-dot"></div><span>リアルタイム同期中</span></div>
-    <div class="filter-row" id="filter-row"></div>
+    <div class="view-tabs">
+      <div class="view-tab active" onclick="setView('list',this)">📋 リスト</div>
+      <div class="view-tab" onclick="setView('map',this)">🗺️ マップ</div>
+    </div>
+    <div class="big-cat-row" id="big-cat-row"></div>
   </div>
+
+  <div class="sub-cat-row" id="sub-cat-row" style="display:none"></div>
+
   <div class="stats-row" id="stats-row"></div>
+
   <div class="map-search-bar">
     <input id="pac-input" type="text" placeholder="🔍 場所を検索して追加（例：渋谷スカイ）">
   </div>
-  <div class="spots-container" id="spots-container"><div style="text-align:center;padding:3rem;color:var(--ink-light)">読み込み中…</div></div>
+
+  <div id="list-view"></div>
+
+  <div id="map-view">
+    <div id="map-container"></div>
+    <div class="map-spot-list" id="map-spot-list"></div>
+  </div>
+
   <button class="fab" onclick="openModal()">＋ 場所を追加</button>
 </div>
- 
+
 <div class="modal-overlay" id="modal-overlay" onclick="closeModalBg(event)">
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-title" id="modal-title">場所を追加</div>
     <div class="place-preview" id="place-preview"><strong id="preview-name"></strong><span id="preview-addr"></span></div>
     <div class="field"><label>場所の名前</label><input type="text" id="f-name" placeholder="例：代々木公園"></div>
-    <div class="field"><label>カテゴリ</label><div class="cat-grid" id="cat-grid"></div></div>
+    <div class="field">
+      <label>カテゴリ</label>
+      <div class="big-cat-select" id="modal-big-cat"></div>
+      <div class="sub-cat-select" id="modal-sub-cat"></div>
+    </div>
     <div class="field"><label>行きたい度</label>
       <div class="pri-row">
         <div class="pri-btn" data-v="1" onclick="selPri(this)">★ ちょっと</div>
@@ -167,50 +223,82 @@ body { font-family: 'Zen Maru Gothic', sans-serif; background: var(--sand); colo
     </div>
   </div>
 </div>
- 
+
 <script>
-const CATEGORIES = [
-  { v:'ラーメン',      e:'🍜', bg:'#FFF3E0', ac:'#E65100', tx:'#BF360C' },
-  { v:'イタリアン',    e:'🍝', bg:'#FCE4EC', ac:'#C2185B', tx:'#880E4F' },
-  { v:'和食',          e:'🍱', bg:'#F3E5F5', ac:'#7B1FA2', tx:'#4A148C' },
-  { v:'ディナー',      e:'🥂', bg:'#E8EAF6', ac:'#3949AB', tx:'#1A237E' },
-  { v:'カフェ',        e:'☕', bg:'#FFF8E8', ac:'#D4900A', tx:'#A06800' },
-  { v:'スイーツ',      e:'🍰', bg:'#FCE4EC', ac:'#E91E63', tx:'#880E4F' },
-  { v:'焼肉・BBQ',    e:'🥩', bg:'#FBE9E7', ac:'#BF360C', tx:'#870000' },
-  { v:'居酒屋',        e:'🍻', bg:'#FFF3E0', ac:'#E65100', tx:'#BF360C' },
-  { v:'観光',          e:'🗺️', bg:'#EBF3FC', ac:'#3A78B5', tx:'#1A5890' },
-  { v:'テーマパーク',  e:'🎢', bg:'#FFF0EE', ac:'#E8614A', tx:'#C44A34' },
-  { v:'美術館・博物館',e:'🖼️', bg:'#F3E5F5', ac:'#7B1FA2', tx:'#4A148C' },
-  { v:'自然・公園',    e:'🌿', bg:'#EBF5F0', ac:'#4A8C6F', tx:'#2A6C4F' },
-  { v:'ショッピング',  e:'🛍️', bg:'#FCEEF6', ac:'#C45890', tx:'#9A3870' },
-  { v:'エンタメ',      e:'🎡', bg:'#F2EEFF', ac:'#7A5CB8', tx:'#5A3C98' },
-  { v:'温泉・スパ',    e:'♨️', bg:'#FFF3E0', ac:'#FF6F00', tx:'#E65100' },
-  { v:'ドライブ',      e:'🚗', bg:'#E3F2FD', ac:'#1565C0', tx:'#0D47A1' },
-  { v:'その他',        e:'📍', bg:'#F5F0E8', ac:'#A89880', tx:'#6B5E4E' },
+// ========== カテゴリ定義 ==========
+const BIG_CATS = [
+  { v:'食事',       e:'🍽️', color:'#E65100' },
+  { v:'カフェ・スイーツ', e:'☕', color:'#D4900A' },
+  { v:'おでかけ',   e:'🗺️', color:'#3A78B5' },
+  { v:'ショッピング',e:'🛍️', color:'#C45890' },
+  { v:'エンタメ',   e:'🎡', color:'#7A5CB8' },
+  { v:'リラックス', e:'♨️', color:'#4A8C6F' },
 ];
- 
-let spots = {}, currentUser = '', filter = 'all', editId = null, selCatVal = '', selPriVal = 0, selectedPlace = null;
- 
-function buildCatGrid() {
-  document.getElementById('cat-grid').innerHTML = CATEGORIES.map(c =>
-    `<div class="cat-opt" data-v="${c.v}" onclick="selCat(this)">${c.e} ${c.v}</div>`
-  ).join('');
-}
- 
-function buildFilterTabs() {
-  const tabs = [{ v:'all', label:'すべて' }, ...CATEGORIES.map(c => ({ v:c.v, label:`${c.e} ${c.v}` }))];
-  document.getElementById('filter-row').innerHTML = tabs.map((t,i) =>
-    `<div class="filter-chip${i===0?' active':''}" data-cat="${t.v}" onclick="setFilter('${t.v}',this)">${t.label}</div>`
-  ).join('');
-}
- 
-window.setFilter = function(cat, el) {
-  filter = cat;
-  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
-  renderSpots();
+
+const SUB_CATS = {
+  '食事': [
+    { v:'ラーメン',   e:'🍜', bg:'#FFF3E0', ac:'#E65100', tx:'#BF360C' },
+    { v:'イタリアン', e:'🍝', bg:'#FCE4EC', ac:'#C2185B', tx:'#880E4F' },
+    { v:'和食',       e:'🍱', bg:'#F3E5F5', ac:'#7B1FA2', tx:'#4A148C' },
+    { v:'ディナー',   e:'🥂', bg:'#E8EAF6', ac:'#3949AB', tx:'#1A237E' },
+    { v:'焼肉・BBQ', e:'🥩', bg:'#FBE9E7', ac:'#BF360C', tx:'#870000' },
+    { v:'居酒屋',     e:'🍻', bg:'#FFF3E0', ac:'#E65100', tx:'#BF360C' },
+    { v:'中華',       e:'🥟', bg:'#FFF8E8', ac:'#D4900A', tx:'#A06800' },
+    { v:'カレー',     e:'🍛', bg:'#FFF3E0', ac:'#E65100', tx:'#BF360C' },
+    { v:'その他グルメ',e:'🍴',bg:'#F5F0E8', ac:'#A89880', tx:'#6B5E4E' },
+  ],
+  'カフェ・スイーツ': [
+    { v:'カフェ',     e:'☕', bg:'#FFF8E8', ac:'#D4900A', tx:'#A06800' },
+    { v:'スイーツ',   e:'🍰', bg:'#FCE4EC', ac:'#E91E63', tx:'#880E4F' },
+    { v:'パン・ベーカリー',e:'🥐',bg:'#FFF3E0',ac:'#E65100',tx:'#BF360C'},
+  ],
+  'おでかけ': [
+    { v:'観光',       e:'🗺️', bg:'#EBF3FC', ac:'#3A78B5', tx:'#1A5890' },
+    { v:'自然・公園', e:'🌿', bg:'#EBF5F0', ac:'#4A8C6F', tx:'#2A6C4F' },
+    { v:'美術館・博物館',e:'🖼️',bg:'#F3E5F5',ac:'#7B1FA2',tx:'#4A148C'},
+    { v:'テーマパーク',e:'🎢',bg:'#FFF0EE',ac:'#E8614A',tx:'#C44A34' },
+    { v:'ドライブ',   e:'🚗', bg:'#E3F2FD', ac:'#1565C0', tx:'#0D47A1' },
+    { v:'日帰り旅行', e:'🚃', bg:'#E8F5E9', ac:'#2E7D32', tx:'#1B5E20' },
+  ],
+  'ショッピング': [
+    { v:'ショッピング',e:'🛍️',bg:'#FCEEF6',ac:'#C45890',tx:'#9A3870' },
+    { v:'古着・ヴィンテージ',e:'👗',bg:'#FCE4EC',ac:'#C2185B',tx:'#880E4F'},
+    { v:'雑貨・インテリア',e:'🏮',bg:'#FFF8E8',ac:'#D4900A',tx:'#A06800'},
+  ],
+  'エンタメ': [
+    { v:'映画・舞台', e:'🎭', bg:'#F2EEFF', ac:'#7A5CB8', tx:'#5A3C98' },
+    { v:'ライブ・音楽',e:'🎵',bg:'#EBF3FC',ac:'#3A78B5',tx:'#1A5890' },
+    { v:'スポーツ観戦',e:'⚽',bg:'#EBF5F0',ac:'#4A8C6F',tx:'#2A6C4F' },
+    { v:'ゲーセン・遊び',e:'🕹️',bg:'#F2EEFF',ac:'#7A5CB8',tx:'#5A3C98'},
+  ],
+  'リラックス': [
+    { v:'温泉・スパ', e:'♨️', bg:'#FFF3E0', ac:'#FF6F00', tx:'#E65100' },
+    { v:'ホテル・旅館',e:'🏨',bg:'#E8EAF6',ac:'#3949AB',tx:'#1A237E' },
+    { v:'その他',     e:'📍', bg:'#F5F0E8', ac:'#A89880', tx:'#6B5E4E' },
+  ],
 };
- 
+
+function getSubCat(subVal) {
+  for (const subs of Object.values(SUB_CATS)) {
+    const found = subs.find(s => s.v === subVal);
+    if (found) return found;
+  }
+  return { e:'📍', bg:'#F5F0E8', ac:'#A89880', tx:'#6B5E4E' };
+}
+
+function getBigCatOf(subVal) {
+  for (const [big, subs] of Object.entries(SUB_CATS)) {
+    if (subs.find(s => s.v === subVal)) return big;
+  }
+  return null;
+}
+
+let spots = {}, currentUser = '', currentView = 'list';
+let filterBig = 'all', filterSub = 'all';
+let editId = null, selBigCat = '', selSubCat = '', selPriVal = 0, selectedPlace = null;
+let gmap = null, markers = [];
+
+// ========== 名前入力 ==========
 window.startApp = function() {
   const name = document.getElementById('username-input').value.trim();
   if (!name) { alert('名前を入力してね！'); return; }
@@ -218,16 +306,93 @@ window.startApp = function() {
   document.getElementById('name-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   document.getElementById('user-badge').textContent = name + ' として参加中';
-  buildCatGrid();
-  buildFilterTabs();
+  buildBigCatFilter();
+  buildModalBigCat();
   initFirebase();
   initMaps();
 };
-document.getElementById('username-input').addEventListener('keypress', e => { if (e.key==='Enter') window.startApp(); });
- 
+document.getElementById('username-input').addEventListener('keypress', e => { if(e.key==='Enter') window.startApp(); });
+
+// ========== ビュー切替 ==========
+window.setView = function(v, el) {
+  currentView = v;
+  document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('list-view').style.display = v==='list' ? 'block' : 'none';
+  document.getElementById('map-view').style.display = v==='map' ? 'block' : 'none';
+  if (v==='map') renderMap();
+};
+
+// ========== 大カテゴリフィルター ==========
+function buildBigCatFilter() {
+  const row = document.getElementById('big-cat-row');
+  row.innerHTML = `<div class="big-cat-chip active" data-v="all" onclick="setBigFilter('all',this)">すべて</div>` +
+    BIG_CATS.map(c => `<div class="big-cat-chip" data-v="${c.v}" onclick="setBigFilter('${c.v}',this)">${c.e} ${c.v}</div>`).join('');
+}
+
+window.setBigFilter = function(big, el) {
+  filterBig = big; filterSub = 'all';
+  document.querySelectorAll('.big-cat-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  // 小カテゴリ行を更新
+  const subRow = document.getElementById('sub-cat-row');
+  if (big === 'all') {
+    subRow.style.display = 'none';
+  } else {
+    const subs = SUB_CATS[big] || [];
+    subRow.innerHTML = `<div class="sub-cat-chip active" data-v="all" onclick="setSubFilter('all',this)">すべて</div>` +
+      subs.map(s => `<div class="sub-cat-chip" data-v="${s.v}" onclick="setSubFilter('${s.v}',this)">${s.e} ${s.v}</div>`).join('');
+    subRow.style.display = 'flex';
+  }
+  renderSpots();
+  if (currentView==='map') renderMap();
+};
+
+window.setSubFilter = function(sub, el) {
+  filterSub = sub;
+  document.querySelectorAll('.sub-cat-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderSpots();
+  if (currentView==='map') renderMap();
+};
+
+// ========== モーダル カテゴリ ==========
+function buildModalBigCat() {
+  document.getElementById('modal-big-cat').innerHTML = BIG_CATS.map(c =>
+    `<div class="big-cat-opt" data-v="${c.v}" onclick="selBigCatFn(this)">${c.e} ${c.v}</div>`
+  ).join('');
+}
+
+window.selBigCatFn = function(el) {
+  selBigCat = el.dataset.v; selSubCat = '';
+  document.querySelectorAll('.big-cat-opt').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+  // 小カテゴリ表示
+  const subs = SUB_CATS[selBigCat] || [];
+  const subEl = document.getElementById('modal-sub-cat');
+  subEl.innerHTML = subs.map(s =>
+    `<div class="sub-cat-opt" data-v="${s.v}" onclick="selSubCatFn(this)">${s.e} ${s.v}</div>`
+  ).join('');
+  subEl.classList.add('show');
+};
+
+window.selSubCatFn = function(el) {
+  selSubCat = el.dataset.v;
+  document.querySelectorAll('.sub-cat-opt').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+};
+
+window.selPri = function(el) {
+  selPriVal = parseInt(el.dataset.v);
+  document.querySelectorAll('.pri-btn').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+};
+
+// ========== Google Maps ==========
 function initMaps() {
+  // Places Autocomplete
   const input = document.getElementById('pac-input');
-  const autocomplete = new google.maps.places.Autocomplete(input, { language: 'ja' });
+  const autocomplete = new google.maps.places.Autocomplete(input, { language:'ja' });
   autocomplete.addListener('place_changed', () => {
     const place = autocomplete.getPlace();
     if (!place.name) return;
@@ -235,6 +400,8 @@ function initMaps() {
       name: place.name,
       addr: place.formatted_address || '',
       mapUrl: place.url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.name)}`,
+      lat: place.geometry?.location?.lat(),
+      lng: place.geometry?.location?.lng(),
     };
     openModal();
     document.getElementById('f-name').value = selectedPlace.name;
@@ -243,8 +410,57 @@ function initMaps() {
     document.getElementById('place-preview').classList.add('show');
     input.value = '';
   });
+
+  // マップ初期化（東京中心）
+  gmap = new google.maps.Map(document.getElementById('map-container'), {
+    center: { lat: 35.6812, lng: 139.7671 },
+    zoom: 11,
+    mapTypeControl: false,
+    streetViewControl: false,
+    fullscreenControl: false,
+  });
 }
- 
+
+function renderMap() {
+  if (!gmap) return;
+  markers.forEach(m => m.setMap(null));
+  markers = [];
+  const mapList = document.getElementById('map-spot-list');
+  const arr = filteredSpots();
+
+  if (!arr.length) { mapList.innerHTML = '<div class="empty"><span class="empty-emoji">📍</span><p>スポットがないよ</p></div>'; return; }
+
+  const bounds = new google.maps.LatLngBounds();
+  mapList.innerHTML = '';
+
+  arr.forEach((s, i) => {
+    if (!s.lat || !s.lng) return;
+    const pos = { lat: s.lat, lng: s.lng };
+    const ci = getSubCat(s.cat);
+    const marker = new google.maps.Marker({
+      position: pos, map: gmap,
+      label: { text: String(i+1), color: 'white', fontWeight: 'bold', fontSize: '12px' },
+      title: s.name,
+    });
+    const iw = new google.maps.InfoWindow({
+      content: `<div style="font-family:'Zen Maru Gothic',sans-serif;padding:4px"><strong>${s.name}</strong><br><small>${ci.e} ${s.cat}</small></div>`
+    });
+    marker.addListener('click', () => iw.open(gmap, marker));
+    markers.push(marker);
+    bounds.extend(pos);
+
+    // リスト
+    const item = document.createElement('div');
+    item.className = 'map-spot-item';
+    item.innerHTML = `<div class="map-spot-num">${i+1}</div><div class="map-spot-info"><div class="map-spot-name">${s.name}</div><div class="map-spot-cat">${ci.e} ${s.cat} · by ${s.addedBy||'?'}</div></div>`;
+    item.onclick = () => { gmap.setCenter(pos); gmap.setZoom(16); iw.open(gmap, marker); };
+    mapList.appendChild(item);
+  });
+
+  if (!bounds.isEmpty()) gmap.fitBounds(bounds);
+}
+
+// ========== Stats ==========
 function renderStats() {
   const arr = Object.values(spots);
   document.getElementById('stats-row').innerHTML = `
@@ -253,24 +469,32 @@ function renderStats() {
     <div class="stat-box"><div class="stat-num">${arr.filter(s=>s.pri===3).length}</div><div class="stat-label">絶対行きたい！</div></div>
   `;
 }
- 
+
 function linkify(text) {
   if (!text) return '';
   return text.replace(/(https?:\/\/[^\s]+)/g, url => `<a href="${url}" target="_blank" rel="noopener">${url}</a>`);
 }
- 
+
+function filteredSpots() {
+  let arr = Object.entries(spots).map(([id,s])=>({id,...s}));
+  if (filterBig !== 'all') {
+    const subs = (SUB_CATS[filterBig]||[]).map(s=>s.v);
+    arr = arr.filter(s => subs.includes(s.cat));
+  }
+  if (filterSub !== 'all') arr = arr.filter(s => s.cat===filterSub);
+  return arr.sort((a,b) => (b.pri-a.pri)||(a.visited?1:-1));
+}
+
 function renderSpots() {
-  const container = document.getElementById('spots-container');
-  let arr = Object.entries(spots).map(([id,s]) => ({ id, ...s }));
-  if (filter !== 'all') arr = arr.filter(s => s.cat === filter);
-  arr.sort((a,b) => (b.pri-a.pri) || (a.visited?1:-1));
+  const container = document.getElementById('list-view');
+  const arr = filteredSpots();
   if (!arr.length) {
-    container.innerHTML = `<div class="empty"><span class="empty-emoji">🌏</span><p>まだスポットがないよ<br>上の検索バーか「＋ 場所を追加」で追加しよう！</p></div>`;
+    container.innerHTML = `<div class="empty"><span class="empty-emoji">🌏</span><p>まだスポットがないよ<br>検索バーか「＋ 場所を追加」で追加しよう！</p></div>`;
     return;
   }
   container.innerHTML = arr.map(s => {
-    const ci = CATEGORIES.find(c=>c.v===s.cat) || { e:'📍', bg:'#F5F0E8', ac:'#A89880', tx:'#6B5E4E' };
-    const stars = [1,2,3].map(i => `<button class="star-btn" onclick="setPri('${s.id}',${i})">${i<=s.pri?'★':'☆'}</button>`).join('');
+    const ci = getSubCat(s.cat);
+    const stars = [1,2,3].map(i=>`<button class="star-btn" onclick="setPri('${s.id}',${i})">${i<=s.pri?'★':'☆'}</button>`).join('');
     const mapBtn = s.mapUrl ? `<button class="action-btn btn-map" onclick="window.open('${s.mapUrl}','_blank')">🗺️ マップ</button>` : '';
     return `
     <div class="spot-card${s.visited?' visited':''}">
@@ -288,12 +512,11 @@ function renderSpots() {
               <div class="stars-row">${stars}</div>
               <span class="added-by">by ${s.addedBy||'?'}</span>
             </div>
-            ${s.memo ? `<div class="card-memo">${linkify(s.memo)}</div>` : ''}
+            ${s.memo?`<div class="card-memo">${linkify(s.memo)}</div>`:''}
             <div class="card-actions">
               ${s.visited
-                ? `<button class="action-btn" onclick="toggleVisit('${s.id}')">↩ 未訪問に戻す</button>`
-                : `<button class="action-btn btn-go" onclick="toggleVisit('${s.id}')">✓ 行ってきた！</button>`
-              }
+                ?`<button class="action-btn" onclick="toggleVisit('${s.id}')">↩ 未訪問に戻す</button>`
+                :`<button class="action-btn btn-go" onclick="toggleVisit('${s.id}')">✓ 行ってきた！</button>`}
               ${mapBtn}
               <button class="action-btn" onclick="editSpot('${s.id}')">✏️ 編集</button>
               <button class="action-btn btn-del" onclick="deleteSpot('${s.id}')">🗑</button>
@@ -304,55 +527,65 @@ function renderSpots() {
     </div>`;
   }).join('');
 }
- 
+
+// ========== モーダル ==========
 window.openModal = function() {
-  if (!editId) { selectedPlace = null; document.getElementById('place-preview').classList.remove('show'); }
-  document.getElementById('modal-title').textContent = editId ? '編集' : '場所を追加';
+  if (!editId) { selectedPlace=null; document.getElementById('place-preview').classList.remove('show'); }
+  document.getElementById('modal-title').textContent = editId?'編集':'場所を追加';
   document.getElementById('modal-overlay').classList.add('open');
-  setTimeout(() => document.getElementById('f-name').focus(), 300);
+  setTimeout(()=>document.getElementById('f-name').focus(),300);
 };
 window.closeModal = function() {
   document.getElementById('modal-overlay').classList.remove('open');
-  editId = null; selCatVal = ''; selPriVal = 0; selectedPlace = null;
-  document.getElementById('f-name').value = '';
-  document.getElementById('f-memo').value = '';
+  editId=null; selBigCat=''; selSubCat=''; selPriVal=0; selectedPlace=null;
+  document.getElementById('f-name').value='';
+  document.getElementById('f-memo').value='';
   document.getElementById('place-preview').classList.remove('show');
-  document.querySelectorAll('.cat-opt').forEach(e=>e.classList.remove('selected'));
+  document.querySelectorAll('.big-cat-opt').forEach(e=>e.classList.remove('selected'));
+  document.querySelectorAll('.sub-cat-opt').forEach(e=>e.classList.remove('selected'));
+  document.getElementById('modal-sub-cat').classList.remove('show');
   document.querySelectorAll('.pri-btn').forEach(e=>e.classList.remove('selected'));
 };
-window.closeModalBg = function(e) { if (e.target===document.getElementById('modal-overlay')) window.closeModal(); };
-window.selCat = function(el) { selCatVal=el.dataset.v; document.querySelectorAll('.cat-opt').forEach(e=>e.classList.remove('selected')); el.classList.add('selected'); };
-window.selPri = function(el) { selPriVal=parseInt(el.dataset.v); document.querySelectorAll('.pri-btn').forEach(e=>e.classList.remove('selected')); el.classList.add('selected'); };
- 
+window.closeModalBg = function(e) { if(e.target===document.getElementById('modal-overlay')) window.closeModal(); };
+
 window.saveSpot = function() {
   const name = document.getElementById('f-name').value.trim();
-  if (!name || !selCatVal || !selPriVal) { alert('名前・カテゴリ・行きたい度を入力してね！'); return; }
+  if (!name || !selSubCat || !selPriVal) { alert('名前・カテゴリ（小）・行きたい度を選んでね！'); return; }
   const memo = document.getElementById('f-memo').value.trim();
-  const mapUrl = selectedPlace?.mapUrl || (editId ? spots[editId]?.mapUrl : null) || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name)}`;
-  const data = { name, cat:selCatVal, pri:selPriVal, memo, visited:false, addedBy:currentUser, mapUrl, updatedAt:Date.now() };
-  if (editId) { data.visited=spots[editId].visited; data.addedBy=spots[editId].addedBy; window._fbUpdate(editId, data); }
+  const mapUrl = selectedPlace?.mapUrl || (editId?spots[editId]?.mapUrl:null) || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name)}`;
+  const lat = selectedPlace?.lat || (editId?spots[editId]?.lat:null) || null;
+  const lng = selectedPlace?.lng || (editId?spots[editId]?.lng:null) || null;
+  const data = { name, cat:selSubCat, pri:selPriVal, memo, visited:false, addedBy:currentUser, mapUrl, lat, lng, updatedAt:Date.now() };
+  if (editId) { data.visited=spots[editId].visited; data.addedBy=spots[editId].addedBy; window._fbUpdate(editId,data); }
   else { window._fbPush(data); }
   window.closeModal();
 };
- 
-window.toggleVisit = function(id) { const s=spots[id]; if(s) window._fbUpdate(id,{visited:!s.visited}); };
-window.setPri = function(id,v) { window._fbUpdate(id,{pri:v}); };
-window.deleteSpot = function(id) { if(!confirm('削除しますか？')) return; window._fbRemove(id); };
+
+window.toggleVisit = id => { const s=spots[id]; if(s) window._fbUpdate(id,{visited:!s.visited}); };
+window.setPri = (id,v) => window._fbUpdate(id,{pri:v});
+window.deleteSpot = id => { if(!confirm('削除しますか？')) return; window._fbRemove(id); };
 window.editSpot = function(id) {
   const s=spots[id]; if(!s) return;
-  editId=id; selCatVal=s.cat; selPriVal=s.pri;
+  editId=id; selSubCat=s.cat; selPriVal=s.pri;
+  selBigCat = getBigCatOf(s.cat) || '';
   document.getElementById('f-name').value=s.name;
   document.getElementById('f-memo').value=s.memo||'';
-  document.querySelectorAll('.cat-opt').forEach(e=>e.classList.toggle('selected',e.dataset.v===s.cat));
-  document.querySelectorAll('.pri-btn').forEach(e=>e.classList.toggle('selected',parseInt(e.dataset.v)===s.pri));
+  // 大カテゴリ選択
+  document.querySelectorAll('.big-cat-opt').forEach(e=>{
+    if(e.dataset.v===selBigCat) { e.classList.add('selected'); selBigCatFn(e); }
+  });
+  setTimeout(()=>{
+    document.querySelectorAll('.sub-cat-opt').forEach(e=>e.classList.toggle('selected',e.dataset.v===s.cat));
+    document.querySelectorAll('.pri-btn').forEach(e=>e.classList.toggle('selected',parseInt(e.dataset.v)===s.pri));
+  },50);
   window.openModal();
 };
 </script>
- 
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue, push, update, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
- 
+
 const firebaseConfig = {
   apiKey: "AIzaSyDH1Ac79_yBDYeg9ct1-guLUJH51bvJR60",
   authDomain: "futari-map-67266.firebaseapp.com",
@@ -362,24 +595,24 @@ const firebaseConfig = {
   messagingSenderId: "645337305085",
   appId: "1:645337305085:web:b5b6290965ace9d0f65394",
 };
- 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const spotsRef = ref(db, 'spots');
- 
-window._fbPush = (data) => push(spotsRef, data);
+
+window._fbPush = data => push(spotsRef, data);
 window._fbUpdate = (id, data) => update(ref(db,'spots/'+id), data);
-window._fbRemove = (id) => remove(ref(db,'spots/'+id));
- 
+window._fbRemove = id => remove(ref(db,'spots/'+id));
+
 window.initFirebase = function() {
-  onValue(spotsRef, (snapshot) => {
+  onValue(spotsRef, snapshot => {
     spots = snapshot.val() || {};
     renderStats();
     renderSpots();
+    if (currentView==='map') renderMap();
   });
 };
 </script>
- 
+
 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBPqXoWTbGfalepjqDynYCn-f6cAI-bgGc&libraries=places&language=ja"></script>
 </body>
 </html>
