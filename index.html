@@ -793,8 +793,6 @@ window.closeModalBg = function(e) { if(e.target===document.getElementById('modal
 
 window.saveSpot = function() {
   const name = document.getElementById('f-name').value.trim();
-  // デバッグ：現在の選択状態を表示
-  alert('デバッグ：名前=' + name + ' 大=' + selBigCat + ' 小=' + selSubCat + ' 度=' + selPriVal);
   if (!name) { alert('場所の名前を入力してね！'); return; }
   if (!selBigCat) { alert('大カテゴリを選んでね！（食事・カフェなど）'); return; }
   if (!selSubCat) { alert('カテゴリの種類を選んでね！（ラーメン・カフェなど）'); return; }
@@ -804,9 +802,18 @@ window.saveSpot = function() {
   const lat = selectedPlace?.lat || (editId?spots[editId]?.lat:null) || null;
   const lng = selectedPlace?.lng || (editId?spots[editId]?.lng:null) || null;
   const data = { name, cat:selSubCat, pri:selPriVal, memo, visited:false, addedBy:currentUser, mapUrl, lat, lng, updatedAt:Date.now() };
-  if (editId) { data.visited=spots[editId].visited; data.addedBy=spots[editId].addedBy; window._fbUpdate(editId,data); }
-  else { window._fbPush(data); }
-  window.closeModal();
+  try {
+    if (editId && spots[editId]) {
+      data.visited = spots[editId].visited;
+      data.addedBy = spots[editId].addedBy;
+      window._fbUpdate(editId, data);
+    } else {
+      window._fbPush(data);
+    }
+    window.closeModal();
+  } catch(err) {
+    alert('保存エラー: ' + err.message);
+  }
 };
 
 window.toggleVisit = id => { const s=spots[id]; if(s) window._fbUpdate(id,{visited:!s.visited}); };
