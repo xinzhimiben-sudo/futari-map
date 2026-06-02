@@ -458,7 +458,7 @@ function initMaps() {
         return;
       }
       suggList.innerHTML = results.slice(0, 6).map((r, i) =>
-        `<div class="pac-sugg-item" onclick="selectSuggestion('${r.place_id}')">
+        `<div class="pac-sugg-item" ontouchstart="selectSuggestion('${r.place_id}')" onmousedown="selectSuggestion('${r.place_id}')">
           <span style="font-size:15px">${r.name}</span>
           <span style="font-size:12px;color:var(--ink-light);display:block;margin-top:2px">${r.formatted_address||''}</span>
         </div>`
@@ -481,7 +481,7 @@ function initMaps() {
     searchTimer = setTimeout(() => searchPlaces(input.value), 500);
   });
 
-  input.addEventListener('blur', () => setTimeout(() => { suggList.style.display='none'; }, 200));
+  input.addEventListener('blur', () => setTimeout(() => { suggList.style.display='none'; }, 400));
   input.addEventListener('focus', () => { if (input.value) searchPlaces(input.value); });
 
   // モーダル内検索バー
