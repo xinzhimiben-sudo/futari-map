@@ -210,11 +210,12 @@ body { font-family: 'Zen Maru Gothic', sans-serif; background: var(--sand); colo
 
   <div id="map-view" style="display:none;">
     <div style="padding:0.75rem 1.25rem 0.5rem;position:relative;">
-      <input id="pac-input" type="text" placeholder="🔍 ごはん・カフェ・観光など入力…" autocomplete="new-password" role="combobox" style="width:100%;padding:11px 14px;border:1.5px solid var(--sand-dark);border-radius:var(--radius-sm);font-family:'Zen Maru Gothic',sans-serif;font-size:14px;background:var(--white);color:var(--ink);outline:none;transition:border-color 0.2s;">
+      <input id="pac-input" type="text" placeholder="🔍 ごはん・カフェ・観光など入力…" autocomplete="new-password" role="combobox" inputmode="search" enterkeyhint="search" style="width:100%;padding:11px 14px;border:1.5px solid var(--sand-dark);border-radius:var(--radius-sm);font-family:'Zen Maru Gothic',sans-serif;font-size:14px;background:var(--white);color:var(--ink);outline:none;transition:border-color 0.2s;">
       <div id="pac-suggestions" style="display:none;position:absolute;left:1.25rem;right:1.25rem;background:var(--white);border:1.5px solid var(--sand-dark);border-radius:var(--radius-sm);z-index:200;box-shadow:var(--shadow-md);max-height:280px;overflow-y:auto;"></div>
     </div>
-    <div style="padding:0 1.25rem;">
+    <div style="padding:0 1.25rem;position:relative;">
       <div id="map-container"></div>
+      <button onclick="goToMyLocation()" style="position:absolute;bottom:16px;right:28px;width:42px;height:42px;border-radius:50%;background:white;border:none;box-shadow:0 2px 8px rgba(0,0,0,0.2);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;" title="現在地に移動">📍</button>
     </div>
     <div class="place-detail-card" id="place-detail-card">
       <div id="place-detail-img-wrap"></div>
@@ -481,7 +482,18 @@ function initMaps() {
     searchTimer = setTimeout(() => searchPlaces(input.value), 500);
   });
 
-  input.addEventListener('blur', () => setTimeout(() => { suggList.style.display='none'; }, 400));
+  // blurでは消さない（スマホキーボードの完了で消えてしまうため）
+  // 候補リスト以外をタップしたときだけ消す
+  document.addEventListener('touchstart', (e) => {
+    if (!suggList.contains(e.target) && e.target !== input) {
+      suggList.style.display = 'none';
+    }
+  });
+  document.addEventListener('mousedown', (e) => {
+    if (!suggList.contains(e.target) && e.target !== input) {
+      suggList.style.display = 'none';
+    }
+  });
   input.addEventListener('focus', () => { if (input.value) searchPlaces(input.value); });
 
   // モーダル内検索バー
@@ -577,6 +589,24 @@ function showPlaceDetail(place) {
 
   card.classList.add('show');
 }
+
+window.goToMyLocation = function() {
+  if (!navigator.geolocation) { alert('位置情報が使えません'); return; }
+  navigator.geolocation.getCurrentPosition(pos => {
+    const loc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+    userLocation = new google.maps.LatLng(loc.lat, loc.lng);
+    if (gmap) {
+      gmap.setCenter(loc);
+      gmap.setZoom(15);
+      // 現在地マーカー
+      new google.maps.Marker({
+        position: loc, map: gmap,
+        icon: { path: google.maps.SymbolPath.CIRCLE, scale: 8, fillColor: '#4A8CF5', fillOpacity: 1, strokeColor: 'white', strokeWeight: 2 },
+        title: '現在地',
+      });
+    }
+  }, () => alert('位置情報の取得に失敗しました。ブラウザの設定を確認してください。'));
+};
 
 window.addFromDetail = function() {
   document.getElementById('place-detail-card').classList.remove('show');
