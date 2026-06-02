@@ -210,7 +210,7 @@ body { font-family: 'Zen Maru Gothic', sans-serif; background: var(--sand); colo
 
   <div id="map-view" style="display:none;">
     <div style="padding:0.75rem 1.25rem 0.5rem;position:relative;">
-      <input id="pac-input" type="text" placeholder="🔍 ごはん・カフェ・観光など入力…" autocomplete="off" style="width:100%;padding:11px 14px;border:1.5px solid var(--sand-dark);border-radius:var(--radius-sm);font-family:'Zen Maru Gothic',sans-serif;font-size:14px;background:var(--white);color:var(--ink);outline:none;transition:border-color 0.2s;">
+      <input id="pac-input" type="text" placeholder="🔍 ごはん・カフェ・観光など入力…" autocomplete="new-password" role="combobox" style="width:100%;padding:11px 14px;border:1.5px solid var(--sand-dark);border-radius:var(--radius-sm);font-family:'Zen Maru Gothic',sans-serif;font-size:14px;background:var(--white);color:var(--ink);outline:none;transition:border-color 0.2s;">
       <div id="pac-suggestions" style="display:none;position:absolute;left:1.25rem;right:1.25rem;background:var(--white);border:1.5px solid var(--sand-dark);border-radius:var(--radius-sm);z-index:200;box-shadow:var(--shadow-md);max-height:280px;overflow-y:auto;"></div>
     </div>
     <div style="padding:0 1.25rem;">
@@ -432,7 +432,7 @@ window.selPri = function(el) {
 function initMaps() {
   // ヘッダー検索バー
   const input = document.getElementById('pac-input');
-  // pac-inputはTextSearch方式で動作（autocomplete不要）
+  // pac-inputはTextSearch方式で動作
   const service = new google.maps.places.PlacesService(document.createElement('div'));
 
   // 検索候補リスト
@@ -770,6 +770,12 @@ const spotsRef = ref(db, 'spots');
 window._fbPush = data => push(spotsRef, data);
 window._fbUpdate = (id, data) => update(ref(db,'spots/'+id), data);
 window._fbRemove = id => remove(ref(db,'spots/'+id));
+
+// Google Autocompleteドロップダウンを監視して削除
+const _observer = new MutationObserver(() => {
+  document.querySelectorAll('.pac-container').forEach(el => el.remove());
+});
+_observer.observe(document.body, { childList: true, subtree: true });
 
 window.initFirebase = function() {
   onValue(spotsRef, snapshot => {
