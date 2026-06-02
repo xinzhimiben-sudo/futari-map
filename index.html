@@ -793,6 +793,8 @@ window.closeModalBg = function(e) { if(e.target===document.getElementById('modal
 
 window.saveSpot = function() {
   const name = document.getElementById('f-name').value.trim();
+  // デバッグ：現在の選択状態を表示
+  alert('デバッグ：名前=' + name + ' 大=' + selBigCat + ' 小=' + selSubCat + ' 度=' + selPriVal);
   if (!name) { alert('場所の名前を入力してね！'); return; }
   if (!selBigCat) { alert('大カテゴリを選んでね！（食事・カフェなど）'); return; }
   if (!selSubCat) { alert('カテゴリの種類を選んでね！（ラーメン・カフェなど）'); return; }
