@@ -433,7 +433,7 @@ function initMaps() {
     input.value = '';
     // 詳細情報を取得して詳細カードを表示
     if (place.place_id) {
-      service.getDetails({ placeId: place.place_id, fields: ['name','formatted_address','geometry','rating','user_ratings_total','photos','url','opening_hours'], language: 'ja' }, (details, status) => {
+      service.getDetails({ placeId: place.place_id, fields: ['name','formatted_address','geometry','rating','user_ratings_total','photos','url','website','opening_hours'], language: 'ja' }, (details, status) => {
         if (status === google.maps.places.PlacesServiceStatus.OK) {
           showPlaceDetail(details);
         }
@@ -483,6 +483,7 @@ function showPlaceDetail(place) {
     rating: place.rating,
     ratingCount: place.user_ratings_total,
     photos: place.photos,
+    website: place.website || null,
   };
 
   // 地図をその場所に移動
@@ -520,6 +521,19 @@ function showPlaceDetail(place) {
 
   document.getElementById('place-detail-addr').textContent = selectedPlace.addr;
   document.getElementById('place-detail-mapbtn').onclick = () => window.open(selectedPlace.mapUrl, '_blank');
+
+  // ウェブサイトボタン
+  const existingWebBtn = document.getElementById('place-detail-webbtn');
+  if (existingWebBtn) existingWebBtn.remove();
+  if (selectedPlace.website) {
+    const webBtn = document.createElement('button');
+    webBtn.id = 'place-detail-webbtn';
+    webBtn.className = 'place-detail-btn maps';
+    webBtn.innerHTML = '🌐 ウェブサイト';
+    webBtn.onclick = () => window.open(selectedPlace.website, '_blank');
+    document.querySelector('.place-detail-actions').appendChild(webBtn);
+  }
+
   card.classList.add('show');
 }
 
