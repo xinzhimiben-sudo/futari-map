@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ふたりの行きたいところ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --coral: #E8614A;
+    --coral-light: #FFF0EE;
+    --coral-dark: #C44A34;
+    --sand: #F5F0E8;
+    --sand-dark: #E8E0D0;
+    --ink: #2A2318;
+    --ink-mid: #6B5E4E;
+    --ink-light: #A89880;
+    --white: #FDFAF6;
+    --green: #4A8C6F;
+    --green-light: #EBF5F0;
+    --amber: #D4900A;
+    --amber-light: #FFF8E8;
+    --blue: #3A78B5;
+    --blue-light: #EBF3FC;
+    --purple: #7A5CB8;
+    --purple-light: #F2EEFF;
+    --pink: #C45890;
+    --pink-light: #FCEEF6;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 2px 16px rgba(42,35,24,0.08);
+    --shadow-md: 0 4px 24px rgba(42,35,24,0.12);
+  }
+
+  body {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    background: var(--sand);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ========== NAME SCREEN ========== */
+  #name-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: var(--white);
+  }
+
+  .name-card {
+    background: var(--white);
+    border: 1.5px solid var(--sand-dark);
+    border-radius: 24px;
+    padding: 2.5rem 2rem;
+    max-width: 360px;
+    width: 100%;
+    text-align: center;
+    box-shadow: var(--shadow-md);
+  }
+
+  .name-card .pin-emoji {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 1rem;
+    animation: bounce 2s infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  .name-card h1 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    color: var(--ink);
+  }
+
+  .name-card p {
+    font-size: 14px;
+    color: var(--ink-mid);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+
+  .name-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid var(--sand-dark);
+    border-radius: var(--radius-sm);
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 16px;
+    background: var(--sand);
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+    margin-bottom: 1rem;
+  }
+
+  .name-input:focus { border-color: var(--coral); }
+
+  .start-btn {
+    width: 100%;
+    padding: 13px;
+    background: var(--coral);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+
+  .start-btn:hover { background: var(--coral-dark); }
+  .start-btn:active { transform: scale(0.98); }
+
+  /* ========== MAIN APP ========== */
+  #app { display: none; max-width: 600px; margin: 0 auto; padding: 0 0 6rem; }
+
+  .app-header {
+    background: var(--white);
+    border-bottom: 1.5px solid var(--sand-dark);
+    padding: 1rem 1.25rem;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+
+  .header-title { display: flex; align-items: center; gap: 8px; }
+  .header-title span { font-size: 20px; }
+  .header-title h1 { font-size: 17px; font-weight: 700; color: var(--ink); }
+
+  .user-badge {
+    background: var(--coral-light);
+    color: var(--coral-dark);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 99px;
+    border: 1.5px solid var(--coral);
+  }
+
+  .sync-indicator {
+    font-size: 11px;
+    color: var(--ink-light);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .sync-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .filter-row {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+
+  .filter-row::-webkit-scrollbar { display: none; }
+
+  .filter-chip {
+    flex-shrink: 0;
+    padding: 5px 12px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    border: 1.5px solid var(--sand-dark);
+    background: var(--white);
+    color: var(--ink-mid);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .filter-chip.active {
+    background: var(--coral);
+    border-color: var(--coral);
+    color: white;
+    font-weight: 700;
+  }
+
+  /* ========== STATS ========== */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 1rem 1.25rem 0;
+  }
+
+  .stat-box {
+    background: var(--white);
+    border-radius: var(--radius-sm);
+    padding: 12px 10px;
+    text-align: center;
+    border: 1.5px solid var(--sand-dark);
+  }
+
+  .stat-num { font-size: 24px; font-weight: 700; color: var(--coral); }
+  .stat-label { font-size: 11px; color: var(--ink-mid); margin-top: 2px; }
+
+  /* ========== SPOT CARDS ========== */
+  .spots-container { padding: 0.75rem 1.25rem; }
+
+  .spot-card {
+    background: var(--white);
+    border: 1.5px solid var(--sand-dark);
+    border-radius: var(--radius);
+    margin-bottom: 10px;
+    overflow: hidden;
+    transition: transform 0.15s, box-shadow 0.15s;
+    animation: slideIn 0.25s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .spot-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .spot-card.visited { opacity: 0.55; }
+
+  .card-accent { height: 4px; width: 100%; }
+  .card-body { padding: 0.9rem 1rem; }
+
+  .card-top { display: flex; align-items: flex-start; gap: 10px; }
+
+  .cat-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .card-info { flex: 1; min-width: 0; }
+
+  .card-name-row { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; flex-wrap: wrap; }
+  .card-name { font-size: 15px; font-weight: 700; color: var(--ink); }
+
+  .visited-tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 99px;
+    background: var(--green-light);
+    color: var(--green);
+    font-weight: 700;
+    border: 1px solid var(--green);
+  }
+
+  .card-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+  .cat-tag {
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-weight: 500;
+  }
+
+  .stars-row { display: flex; gap: 1px; }
+  .star-btn {
+    background: none;
+    border: none;
+    font-size: 15px;
+    cursor: pointer;
+    padding: 1px;
+    transition: transform 0.1s;
+    line-height: 1;
+  }
+  .star-btn:hover { transform: scale(1.25); }
+
+  .added-by {
+    font-size: 11px;
+    color: var(--ink-light);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .card-memo {
+    font-size: 13px;
+    color: var(--ink-mid);
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--sand-dark);
+    line-height: 1.6;
+  }
+
+  .card-actions { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+
+  .action-btn {
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--sand-dark);
+    background: var(--sand);
+    color: var(--ink-mid);
+    cursor: pointer;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .action-btn:hover { background: var(--sand-dark); color: var(--ink); }
+
+  .btn-go { border-color: var(--green); color: var(--green); background: var(--green-light); }
+  .btn-go:hover { background: var(--green); color: white; }
+  .btn-ungo { border-color: var(--sand-dark); color: var(--ink-light); }
+  .btn-del { border-color: #e0b0b0; color: #b04040; background: #fff5f5; }
+  .btn-del:hover { background: #b04040; color: white; }
+
+  /* ========== FAB ========== */
+  .fab {
+    position: fixed;
+    bottom: 2rem;
+    right: 50%;
+    transform: translateX(50%);
+    max-width: 220px;
+    width: calc(100% - 2.5rem);
+    background: var(--coral);
+    color: white;
+    border: none;
+    border-radius: 99px;
+    padding: 14px 24px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(232,97,74,0.4);
+    transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .fab:hover { background: var(--coral-dark); box-shadow: 0 6px 24px rgba(232,97,74,0.5); }
+  .fab:active { transform: translateX(50%) scale(0.97); }
+
+  /* ========== MODAL ========== */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(42,35,24,0.45);
+    z-index: 100;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modal {
+    background: var(--white);
+    border-radius: 24px 24px 0 0;
+    padding: 1.5rem 1.25rem 2rem;
+    width: 100%;
+    max-width: 600px;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-overlay.open .modal { transform: translateY(0); }
+
+  .modal-handle {
+    width: 36px;
+    height: 4px;
+    background: var(--sand-dark);
+    border-radius: 99px;
+    margin: 0 auto 1.25rem;
+  }
+
+  .modal-title { font-size: 17px; font-weight: 700; margin-bottom: 1.25rem; color: var(--ink); }
+
+  .field { margin-bottom: 1rem; }
+  .field label { display: block; font-size: 13px; color: var(--ink-mid); margin-bottom: 6px; font-weight: 500; }
+
+  .field input, .field textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--sand-dark);
+    border-radius: var(--radius-sm);
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 15px;
+    background: var(--sand);
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .field input:focus, .field textarea:focus { border-color: var(--coral); background: var(--white); }
+  .field textarea { height: 80px; resize: none; }
+
+  .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+
+  .cat-opt {
+    padding: 10px 6px;
+    border: 1.5px solid var(--sand-dark);
+    border-radius: var(--radius-sm);
+    text-align: center;
+    font-size: 13px;
+    cursor: pointer;
+    background: var(--white);
+    color: var(--ink-mid);
+    font-family: 'Zen Maru Gothic', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .cat-opt.selected { border-color: var(--coral); color: var(--coral-dark); background: var(--coral-light); font-weight: 700; }
+
+  .pri-row { display: flex; gap: 6px; }
+
+  .pri-btn {
+    flex: 1;
+    padding: 9px 4px;
+    border: 1.5px solid var(--sand-dark);
+    border-radius: var(--radius-sm);
+    text-align: center;
+    font-size: 13px;
+    cursor: pointer;
+    background: var(--white);
+    color: var(--ink-mid);
+    font-family: 'Zen Maru Gothic', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .pri-btn.selected { border-color: var(--coral); background: var(--coral-light); color: var(--coral-dark); font-weight: 700; }
+
+  .modal-btns { display: flex; gap: 8px; margin-top: 1.5rem; }
+
+  .modal-btns button {
+    flex: 1;
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1.5px solid var(--sand-dark);
+    background: var(--sand);
+    color: var(--ink-mid);
+    transition: all 0.15s;
+  }
+
+  .modal-btns .save { background: var(--coral); border-color: var(--coral); color: white; }
+  .modal-btns .save:hover { background: var(--coral-dark); }
+
+  /* ========== EMPTY ========== */
+  .empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--ink-light);
+  }
+
+  .empty-emoji { font-size: 40px; display: block; margin-bottom: 0.75rem; }
+  .empty p { font-size: 14px; line-height: 1.7; }
+
+  /* ========== LOADING ========== */
+  .loading {
+    text-align: center;
+    padding: 3rem;
+    color: var(--ink-light);
+    font-size: 14px;
+  }
+
+  @media (min-width: 600px) {
+    #app { background: transparent; }
+    .app-header { border-radius: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 名前入力画面 -->
+<div id="name-screen">
+  <div class="name-card">
+    <span class="pin-emoji">📍</span>
+    <h1>ふたりの行きたいところ</h1>
+    <p>あなたの名前を入れてね。<br>彼女と同じリストをリアルタイムで共有できるよ！</p>
+    <input class="name-input" id="username-input" type="text" placeholder="例：たろう" maxlength="10">
+    <button class="start-btn" onclick="startApp()">はじめる ✈️</button>
+  </div>
+</div>
+
+<!-- メインアプリ -->
+<div id="app">
+  <div class="app-header">
+    <div class="header-top">
+      <div class="header-title">
+        <span>🗺️</span>
+        <h1>ふたりの行きたいところ</h1>
+      </div>
+      <div class="user-badge" id="user-badge"></div>
+    </div>
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.6rem;">
+      <div class="sync-indicator">
+        <div class="sync-dot"></div>
+        <span id="sync-label">リアルタイム同期中</span>
+      </div>
+    </div>
+    <div class="filter-row" id="filter-row">
+      <div class="filter-chip active" data-cat="all" onclick="setFilter('all',this)">すべて</div>
+      <div class="filter-chip" data-cat="ご飯" onclick="setFilter('ご飯',this)">🍜 ご飯</div>
+      <div class="filter-chip" data-cat="カフェ" onclick="setFilter('カフェ',this)">☕ カフェ</div>
+      <div class="filter-chip" data-cat="観光" onclick="setFilter('観光',this)">🗺️ 観光</div>
+      <div class="filter-chip" data-cat="ショッピング" onclick="setFilter('ショッピング',this)">🛍️ ショッピング</div>
+      <div class="filter-chip" data-cat="エンタメ" onclick="setFilter('エンタメ',this)">🎡 エンタメ</div>
+      <div class="filter-chip" data-cat="自然" onclick="setFilter('自然',this)">🌿 自然</div>
+    </div>
+  </div>
+
+  <div class="stats-row" id="stats-row"></div>
+  <div class="spots-container" id="spots-container"><div class="loading">読み込み中…</div></div>
+
+  <button class="fab" onclick="openModal()">＋ 場所を追加</button>
+</div>
+
+<!-- モーダル -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalBg(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-title">場所を追加</div>
+
+    <div class="field">
+      <label>場所の名前</label>
+      <input type="text" id="f-name" placeholder="例：代々木公園">
+    </div>
+
+    <div class="field">
+      <label>カテゴリ</label>
+      <div class="cat-grid">
+        <div class="cat-opt" data-v="ご飯" onclick="selCat(this)">🍜 ご飯</div>
+        <div class="cat-opt" data-v="カフェ" onclick="selCat(this)">☕ カフェ</div>
+        <div class="cat-opt" data-v="観光" onclick="selCat(this)">🗺️ 観光</div>
+        <div class="cat-opt" data-v="ショッピング" onclick="selCat(this)">🛍️ ショッピング</div>
+        <div class="cat-opt" data-v="エンタメ" onclick="selCat(this)">🎡 エンタメ</div>
+        <div class="cat-opt" data-v="自然" onclick="selCat(this)">🌿 自然</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>行きたい度</label>
+      <div class="pri-row">
+        <div class="pri-btn" data-v="1" onclick="selPri(this)">★ ちょっと</div>
+        <div class="pri-btn" data-v="2" onclick="selPri(this)">★★ 行きたい</div>
+        <div class="pri-btn" data-v="3" onclick="selPri(this)">★★★ 絶対！</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>メモ（任意）</label>
+      <textarea id="f-memo" placeholder="友達のおすすめ、行く季節、注意点など…"></textarea>
+    </div>
+
+    <div class="modal-btns">
+      <button onclick="closeModal()">キャンセル</button>
+      <button class="save" onclick="saveSpot()">保存する</button>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, onValue, push, set, update, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  // ========== Firebase設定 ==========
+  const firebaseConfig = {
+    apiKey: "AIzaSyDH1Ac79_yBDYeg9ct1-guLUJH51bvJR60",
+    authDomain: "futari-map-67266.firebaseapp.com",
+    databaseURL: "https://futari-map-67266-default-rtdb.firebaseio.com",
+    projectId: "futari-map-67266",
+    storageBucket: "futari-map-67266.firebasestorage.app",
+    messagingSenderId: "645337305085",
+    appId: "1:645337305085:web:b5b6290965ace9d0f65394",
+    measurementId: "G-75K4MVKRQK"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  const spotsRef = ref(db, 'spots');
+
+  // ========== カテゴリ設定 ==========
+  const CAT = {
+    'ご飯':       { emoji:'🍜', bg:'#FFF8E8', accent:'#D4900A', text:'#A06800' },
+    'カフェ':     { emoji:'☕', bg:'#FFF0EE', accent:'#E8614A', text:'#C44A34' },
+    '観光':       { emoji:'🗺️', bg:'#EBF3FC', accent:'#3A78B5', text:'#1A5890' },
+    'ショッピング':{ emoji:'🛍️', bg:'#FCEEF6', accent:'#C45890', text:'#9A3870' },
+    'エンタメ':   { emoji:'🎡', bg:'#F2EEFF', accent:'#7A5CB8', text:'#5A3C98' },
+    '自然':       { emoji:'🌿', bg:'#EBF5F0', accent:'#4A8C6F', text:'#2A6C4F' },
+  };
+
+  // ========== 状態 ==========
+  let spots = {};
+  let currentUser = '';
+  let filter = 'all';
+  let editId = null;
+  let selCatVal = '';
+  let selPriVal = 0;
+
+  // ========== 名前入力 ==========
+  window.startApp = function() {
+    const name = document.getElementById('username-input').value.trim();
+    if (!name) { alert('名前を入力してね！'); return; }
+    currentUser = name;
+    document.getElementById('name-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('user-badge').textContent = name + ' として参加中';
+    initFirebase();
+  };
+
+  document.getElementById('username-input').addEventListener('keypress', e => {
+    if (e.key === 'Enter') window.startApp();
+  });
+
+  // ========== Firebase接続 ==========
+  function initFirebase() {
+    onValue(spotsRef, (snapshot) => {
+      spots = snapshot.val() || {};
+      renderStats();
+      renderSpots();
+    });
+  }
+
+  // ========== フィルター ==========
+  window.setFilter = function(cat, el) {
+    filter = cat;
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    renderSpots();
+  };
+
+  // ========== 統計 ==========
+  function renderStats() {
+    const arr = Object.values(spots);
+    const total = arr.length;
+    const visited = arr.filter(s => s.visited).length;
+    const hot = arr.filter(s => s.pri === 3).length;
+    document.getElementById('stats-row').innerHTML = `
+      <div class="stat-box"><div class="stat-num">${total}</div><div class="stat-label">登録スポット</div></div>
+      <div class="stat-box"><div class="stat-num">${visited}</div><div class="stat-label">行った場所 ✓</div></div>
+      <div class="stat-box"><div class="stat-num">${hot}</div><div class="stat-label">絶対行きたい！</div></div>
+    `;
+  }
+
+  // ========== スポット一覧 ==========
+  function renderSpots() {
+    const container = document.getElementById('spots-container');
+    let arr = Object.entries(spots).map(([id, s]) => ({ id, ...s }));
+    if (filter !== 'all') arr = arr.filter(s => s.cat === filter);
+    arr.sort((a, b) => (b.pri - a.pri) || (a.visited ? 1 : -1));
+
+    if (!arr.length) {
+      container.innerHTML = `<div class="empty"><span class="empty-emoji">🌏</span><p>まだスポットがないよ<br>「＋ 場所を追加」で追加しよう！</p></div>`;
+      return;
+    }
+
+    container.innerHTML = arr.map(s => {
+      const ci = CAT[s.cat] || { emoji:'📍', bg:'#F5F0E8', accent:'#A89880', text:'#6B5E4E' };
+      const stars = [1,2,3].map(i => `<button class="star-btn" onclick="setPri('${s.id}',${i})">${i <= s.pri ? '★' : '☆'}</button>`).join('');
+      return `
+      <div class="spot-card${s.visited ? ' visited' : ''}">
+        <div class="card-accent" style="background:${ci.accent}"></div>
+        <div class="card-body">
+          <div class="card-top">
+            <div class="cat-icon" style="background:${ci.bg}">${ci.emoji}</div>
+            <div class="card-info">
+              <div class="card-name-row">
+                <span class="card-name">${s.name}</span>
+                ${s.visited ? '<span class="visited-tag">✓ 行った！</span>' : ''}
+              </div>
+              <div class="card-meta">
+                <span class="cat-tag" style="background:${ci.bg};color:${ci.text}">${ci.emoji} ${s.cat}</span>
+                <div class="stars-row">${stars}</div>
+                <span class="added-by">by ${s.addedBy || '?'}</span>
+              </div>
+              ${s.memo ? `<div class="card-memo">💬 ${s.memo}</div>` : ''}
+              <div class="card-actions">
+                ${s.visited
+                  ? `<button class="action-btn btn-ungo" onclick="toggleVisit('${s.id}')">↩ 未訪問に戻す</button>`
+                  : `<button class="action-btn btn-go" onclick="toggleVisit('${s.id}')">✓ 行ってきた！</button>`
+                }
+                <button class="action-btn" onclick="editSpot('${s.id}')">✏️ 編集</button>
+                <button class="action-btn btn-del" onclick="deleteSpot('${s.id}')">🗑</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // ========== 操作 ==========
+  window.toggleVisit = function(id) {
+    const s = spots[id];
+    if (!s) return;
+    update(ref(db, 'spots/' + id), { visited: !s.visited });
+  };
+
+  window.setPri = function(id, v) {
+    update(ref(db, 'spots/' + id), { pri: v });
+  };
+
+  window.deleteSpot = function(id) {
+    if (!confirm('このスポットを削除しますか？')) return;
+    remove(ref(db, 'spots/' + id));
+  };
+
+  window.editSpot = function(id) {
+    const s = spots[id];
+    if (!s) return;
+    editId = id;
+    selCatVal = s.cat;
+    selPriVal = s.pri;
+    document.getElementById('f-name').value = s.name;
+    document.getElementById('f-memo').value = s.memo || '';
+    document.querySelectorAll('.cat-opt').forEach(e => e.classList.toggle('selected', e.dataset.v === s.cat));
+    document.querySelectorAll('.pri-btn').forEach(e => e.classList.toggle('selected', parseInt(e.dataset.v) === s.pri));
+    document.getElementById('modal-title').textContent = '編集';
+    document.getElementById('modal-overlay').classList.add('open');
+  };
+
+  // ========== モーダル ==========
+  window.openModal = function() {
+    editId = null; selCatVal = ''; selPriVal = 0;
+    document.getElementById('f-name').value = '';
+    document.getElementById('f-memo').value = '';
+    document.querySelectorAll('.cat-opt').forEach(e => e.classList.remove('selected'));
+    document.querySelectorAll('.pri-btn').forEach(e => e.classList.remove('selected'));
+    document.getElementById('modal-title').textContent = '場所を追加';
+    document.getElementById('modal-overlay').classList.add('open');
+    setTimeout(() => document.getElementById('f-name').focus(), 300);
+  };
+
+  window.closeModal = function() {
+    document.getElementById('modal-overlay').classList.remove('open');
+  };
+
+  window.closeModalBg = function(e) {
+    if (e.target === document.getElementById('modal-overlay')) window.closeModal();
+  };
+
+  window.selCat = function(el) {
+    selCatVal = el.dataset.v;
+    document.querySelectorAll('.cat-opt').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+  };
+
+  window.selPri = function(el) {
+    selPriVal = parseInt(el.dataset.v);
+    document.querySelectorAll('.pri-btn').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+  };
+
+  window.saveSpot = function() {
+    const name = document.getElementById('f-name').value.trim();
+    if (!name || !selCatVal || !selPriVal) {
+      alert('名前・カテゴリ・行きたい度を入力してね！');
+      return;
+    }
+    const memo = document.getElementById('f-memo').value.trim();
+    const data = { name, cat: selCatVal, pri: selPriVal, memo, visited: false, addedBy: currentUser, updatedAt: Date.now() };
+
+    if (editId) {
+      data.visited = spots[editId].visited;
+      data.addedBy = spots[editId].addedBy;
+      update(ref(db, 'spots/' + editId), data);
+    } else {
+      push(spotsRef, data);
+    }
+    window.closeModal();
+  };
+</script>
+</body>
+</html>
