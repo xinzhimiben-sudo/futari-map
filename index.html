@@ -252,9 +252,9 @@ body { font-family: 'Zen Maru Gothic', sans-serif; background: var(--sand); colo
     </div>
     <div class="field"><label>行きたい度</label>
       <div class="pri-row" id="pri-row">
-        <div class="pri-btn" data-v="1">★ ちょっと</div>
-        <div class="pri-btn" data-v="2">★★ 行きたい</div>
-        <div class="pri-btn" data-v="3">★★★ 絶対！</div>
+        <div class="pri-btn" data-v="1" onclick="selPri(this)" ontouchend="selPri(this)">★ ちょっと</div>
+        <div class="pri-btn" data-v="2" onclick="selPri(this)" ontouchend="selPri(this)">★★ 行きたい</div>
+        <div class="pri-btn" data-v="3" onclick="selPri(this)" ontouchend="selPri(this)">★★★ 絶対！</div>
       </div>
     </div>
     <div class="field"><label>メモ・リンク（TikTok・Googleマップなど貼ってOK）</label><textarea id="f-memo" placeholder="https://... やメモを入力"></textarea></div>
@@ -401,30 +401,8 @@ window.setSubFilter = function(sub, el) {
 function buildModalBigCat() {
   const bigCatEl = document.getElementById('modal-big-cat');
   bigCatEl.innerHTML = BIG_CATS.map(c =>
-    `<div class="big-cat-opt" data-v="${c.v}">${c.e} ${c.v}</div>`
+    `<div class="big-cat-opt" data-v="${c.v}" onclick="selBigCatFn(this)" ontouchend="selBigCatFn(this)">${c.e} ${c.v}</div>`
   ).join('');
-  bigCatEl.querySelectorAll('.big-cat-opt').forEach(opt => {
-    const handler = function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      window.selBigCatFn(opt);
-    };
-    opt.addEventListener('click', handler);
-    opt.addEventListener('touchend', handler);
-  });
-
-  // 行きたい度ボタン
-  document.getElementById('pri-row').querySelectorAll('.pri-btn').forEach(btn => {
-    const handler = function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      selPriVal = parseInt(btn.dataset.v);
-      document.querySelectorAll('.pri-btn').forEach(b=>b.classList.remove('selected'));
-      btn.classList.add('selected');
-    };
-    btn.addEventListener('click', handler);
-    btn.addEventListener('touchend', handler);
-  });
 }
 
 window.selBigCatFn = function(el) {
@@ -434,21 +412,15 @@ window.selBigCatFn = function(el) {
   const subs = SUB_CATS[selBigCat] || [];
   const subEl = document.getElementById('modal-sub-cat');
   subEl.innerHTML = subs.map(s =>
-    `<div class="sub-cat-opt" data-v="${s.v}">${s.e} ${s.v}</div>`
+    `<div class="sub-cat-opt" data-v="${s.v}" onclick="onSubCatClick(this)" ontouchend="onSubCatClick(this)">${s.e} ${s.v}</div>`
   ).join('');
   subEl.classList.add('show');
-  // イベントリスナーで登録（onclick/ontouchend不使用）
-  subEl.querySelectorAll('.sub-cat-opt').forEach(opt => {
-    const handler = function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      selSubCat = opt.dataset.v;
-      subEl.querySelectorAll('.sub-cat-opt').forEach(o=>o.classList.remove('selected'));
-      opt.classList.add('selected');
-    };
-    opt.addEventListener('click', handler);
-    opt.addEventListener('touchend', handler);
-  });
+};
+
+window.onSubCatClick = function(el) {
+  selSubCat = el.dataset.v;
+  document.querySelectorAll('.sub-cat-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
 };
 
 window.selSubCatFn = function(el) {
