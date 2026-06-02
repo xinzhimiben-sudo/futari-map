@@ -252,9 +252,9 @@ body { font-family: 'Zen Maru Gothic', sans-serif; background: var(--sand); colo
     </div>
     <div class="field"><label>行きたい度</label>
       <div class="pri-row">
-        <div class="pri-btn" data-v="1" onclick="selPri(this)">★ ちょっと</div>
-        <div class="pri-btn" data-v="2" onclick="selPri(this)">★★ 行きたい</div>
-        <div class="pri-btn" data-v="3" onclick="selPri(this)">★★★ 絶対！</div>
+        <div class="pri-btn" data-v="1" onclick="selPri(this)" ontouchend="selPri(this)">★ ちょっと</div>
+        <div class="pri-btn" data-v="2" onclick="selPri(this)" ontouchend="selPri(this)">★★ 行きたい</div>
+        <div class="pri-btn" data-v="3" onclick="selPri(this)" ontouchend="selPri(this)">★★★ 絶対！</div>
       </div>
     </div>
     <div class="field"><label>メモ・リンク（TikTok・Googleマップなど貼ってOK）</label><textarea id="f-memo" placeholder="https://... やメモを入力"></textarea></div>
@@ -400,7 +400,7 @@ window.setSubFilter = function(sub, el) {
 // ========== モーダル カテゴリ ==========
 function buildModalBigCat() {
   document.getElementById('modal-big-cat').innerHTML = BIG_CATS.map(c =>
-    `<div class="big-cat-opt" data-v="${c.v}" onclick="selBigCatFn(this)">${c.e} ${c.v}</div>`
+    `<div class="big-cat-opt" data-v="${c.v}" onclick="selBigCatFn(this)" ontouchend="selBigCatFn(this)">${c.e} ${c.v}</div>`
   ).join('');
 }
 
@@ -412,7 +412,7 @@ window.selBigCatFn = function(el) {
   const subs = SUB_CATS[selBigCat] || [];
   const subEl = document.getElementById('modal-sub-cat');
   subEl.innerHTML = subs.map(s =>
-    `<div class="sub-cat-opt" data-v="${s.v}" onclick="selSubCatFn(this)">${s.e} ${s.v}</div>`
+    `<div class="sub-cat-opt" data-v="${s.v}" onclick="selSubCatFn(this)" ontouchend="selSubCatFn(this)">${s.e} ${s.v}</div>`
   ).join('');
   subEl.classList.add('show');
 };
@@ -759,7 +759,10 @@ window.closeModalBg = function(e) { if(e.target===document.getElementById('modal
 
 window.saveSpot = function() {
   const name = document.getElementById('f-name').value.trim();
-  if (!name || !selSubCat || !selPriVal) { alert('名前・カテゴリ（小）・行きたい度を選んでね！'); return; }
+  if (!name) { alert('場所の名前を入力してね！'); return; }
+  if (!selBigCat) { alert('大カテゴリを選んでね！（食事・カフェなど）'); return; }
+  if (!selSubCat) { alert('カテゴリの種類を選んでね！（ラーメン・カフェなど）'); return; }
+  if (!selPriVal) { alert('行きたい度を選んでね！'); return; }
   const memo = document.getElementById('f-memo').value.trim();
   const mapUrl = selectedPlace?.mapUrl || (editId?spots[editId]?.mapUrl:null) || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name)}`;
   const lat = selectedPlace?.lat || (editId?spots[editId]?.lat:null) || null;
