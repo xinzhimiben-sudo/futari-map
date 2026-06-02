@@ -131,6 +131,10 @@ body { font-family: 'Zen Maru Gothic', sans-serif; background: var(--sand); colo
 .place-detail-btn.maps { background: var(--sand); border: 1.5px solid var(--sand-dark); color: var(--ink-mid); }
 .place-detail-btn.maps:hover { background: var(--sand-dark); }
 
+.pac-sugg-item { padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--sand-dark);transition:background 0.1s;font-family:'Zen Maru Gothic',sans-serif; }
+.pac-sugg-item:last-child { border-bottom:none; }
+.pac-sugg-item:hover { background:var(--sand); }
+
 /* FAB */
 .fab { position: fixed; bottom: 2rem; right: 50%; transform: translateX(50%); max-width: 220px; width: calc(100% - 2.5rem); background: var(--coral); color: white; border: none; border-radius: 99px; padding: 14px 24px; font-size: 15px; font-weight: 700; font-family: 'Zen Maru Gothic', sans-serif; cursor: pointer; box-shadow: 0 4px 20px rgba(232,97,74,0.4); transition: background 0.2s; z-index: 40; display: flex; align-items: center; justify-content: center; gap: 8px; }
 .fab:hover { background: var(--coral-dark); }
@@ -203,8 +207,9 @@ body { font-family: 'Zen Maru Gothic', sans-serif; background: var(--sand); colo
   <div id="list-view"></div>
 
   <div id="map-view" style="display:none;">
-    <div style="padding:0.75rem 1.25rem 0.5rem;">
-      <input id="pac-input" type="text" placeholder="🔍 行きたい場所を検索して追加…" style="width:100%;padding:11px 14px;border:1.5px solid var(--sand-dark);border-radius:var(--radius-sm);font-family:'Zen Maru Gothic',sans-serif;font-size:14px;background:var(--white);color:var(--ink);outline:none;transition:border-color 0.2s;">
+    <div style="padding:0.75rem 1.25rem 0.5rem;position:relative;">
+      <input id="pac-input" type="text" placeholder="🔍 ごはん・カフェ・観光など入力…" style="width:100%;padding:11px 14px;border:1.5px solid var(--sand-dark);border-radius:var(--radius-sm);font-family:'Zen Maru Gothic',sans-serif;font-size:14px;background:var(--white);color:var(--ink);outline:none;transition:border-color 0.2s;">
+      <div id="pac-suggestions" style="display:none;position:absolute;left:1.25rem;right:1.25rem;background:var(--white);border:1.5px solid var(--sand-dark);border-radius:var(--radius-sm);z-index:200;box-shadow:var(--shadow-md);max-height:280px;overflow-y:auto;"></div>
     </div>
     <div style="padding:0 1.25rem;">
       <div id="map-container"></div>
@@ -427,21 +432,46 @@ function initMaps() {
   const input = document.getElementById('pac-input');
   const autocomplete = new google.maps.places.Autocomplete(input, { language:'ja' });
   const service = new google.maps.places.PlacesService(document.createElement('div'));
-  autocomplete.addListener('place_changed', () => {
-    const place = autocomplete.getPlace();
-    if (!place.name) return;
+
+  // 検索候補リスト
+  const suggList = document.getElementById('pac-suggestions');
+
+  function searchPlaces(query) {
+    if (!query.trim()) { suggList.style.display='none'; return; }
+    // ユーザーの現在地を取得して周辺を優先
+    const center = gmap ? gmap.getCenter() : new google.maps.LatLng(35.6812, 139.7671);
+    service.textSearch({ query, location: center, radius: 5000, language: 'ja' }, (results, status) => {
+      if (status !== google.maps.places.PlacesServiceStatus.OK || !results.length) {
+        suggList.innerHTML = '<div style="padding:10px 14px;font-size:13px;color:var(--ink-light)">見つかりませんでした</div>';
+        suggList.style.display = 'block';
+        return;
+      }
+      suggList.innerHTML = results.slice(0, 6).map((r, i) =>
+        `<div class="pac-sugg-item" onclick="selectSuggestion('${r.place_id}')">
+          <span style="font-size:15px">${r.name}</span>
+          <span style="font-size:12px;color:var(--ink-light);display:block;margin-top:2px">${r.formatted_address||''}</span>
+        </div>`
+      ).join('');
+      suggList.style.display = 'block';
+    });
+  }
+
+  window.selectSuggestion = function(placeId) {
+    suggList.style.display = 'none';
     input.value = '';
-    // 詳細情報を取得して詳細カードを表示
-    if (place.place_id) {
-      service.getDetails({ placeId: place.place_id, fields: ['name','formatted_address','geometry','rating','user_ratings_total','photos','url','website','opening_hours'], language: 'ja' }, (details, status) => {
-        if (status === google.maps.places.PlacesServiceStatus.OK) {
-          showPlaceDetail(details);
-        }
-      });
-    } else {
-      showPlaceDetail(place);
-    }
+    service.getDetails({ placeId, fields: ['name','formatted_address','geometry','rating','user_ratings_total','photos','url','website','opening_hours'], language: 'ja' }, (details, status) => {
+      if (status === google.maps.places.PlacesServiceStatus.OK) showPlaceDetail(details);
+    });
+  };
+
+  let searchTimer = null;
+  input.addEventListener('input', () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => searchPlaces(input.value), 500);
   });
+
+  input.addEventListener('blur', () => setTimeout(() => { suggList.style.display='none'; }, 200));
+  input.addEventListener('focus', () => { if (input.value) searchPlaces(input.value); });
 
   // モーダル内検索バー
   const modalInput = document.getElementById('modal-pac-input');
